@@ -1,0 +1,38 @@
+{
+  "name": "intention-horizon",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Define intentions, tick them off, and watch your horizon.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "e2e:debug": "playwright test --debug",
+    "e2e:report": "playwright test; serenity-bdd run --destination target/site/serenity",
+    "serenity-bdd:update": "serenity-bdd update"
+  },
+  "dependencies": {
+    "dexie": "^4.0.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@serenity-js/assertions": "^3.43.2",
+    "@serenity-js/console-reporter": "^3.43.2",
+    "@serenity-js/core": "^3.43.2",
+    "@serenity-js/playwright": "^3.43.2",
+    "@serenity-js/playwright-test": "^3.43.2",
+    "@serenity-js/serenity-bdd": "^3.43.2",
+    "@serenity-js/web": "^3.43.2",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7"
+  }
+}
