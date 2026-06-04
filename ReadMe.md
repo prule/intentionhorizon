@@ -110,6 +110,7 @@ Determinism comes from a seed injected onto `window` before the app boots, gated
 **Define intentions → tick them off daily → watch your horizon.**
 {{< /center >}}
 
+
 - **Daily entry.** Intentions grouped by category (Exercise, Finance, Focus). Toggle completion for today, and scroll back through a trailing window to fill in or review prior days. Each row shows a single live stat: completions in the trailing target period versus the target.
 - **Flexible targets with status.** Set one optional target per intention — *N completions over M days* (e.g. `3× per 7 days`), which covers everything from "once a year" to "twice a fortnight" with one concept. The current count renders under / on / over target, so a glance tells you where you stand — no mental arithmetic.
 - **Analytics.** A 7-column consistency grid (one per weekday) shades by how many intentions hit target, plus month-over-month trends and streak insights.
