@@ -14,7 +14,7 @@ const SCREEN: Record<string, string> = {
 const nameField = byTestId('intention-name');
 const categoryField = byTestId('category-name');
 
-/** Open the app at the Today screen and wait for it to render. */
+/** Open the app at the Journal screen and wait for it to render. */
 export const OpenTheApp = {
   fresh: (): Task =>
     Task.where('#actor opens the app',
@@ -23,7 +23,7 @@ export const OpenTheApp = {
     ),
 };
 
-/** Reload the page and wait for the Today screen to come back. */
+/** Reload the page and wait for the Journal screen to come back. */
 export const ReloadTheApp = {
   now: (): Task =>
     Task.where('#actor reloads the app',
@@ -41,12 +41,14 @@ export const GoToTab = {
     ),
 };
 
-/** Move the Today screen's date one day backward or forward. */
+/** Move the Journal screen's date one day backward or forward, or jump to today. */
 export const NavigateDay = {
   previous: (): Task =>
     Task.where('#actor goes to the previous day', Click.on(byTestId('date-prev'))),
   next: (): Task =>
     Task.where('#actor goes to the next day', Click.on(byTestId('date-next'))),
+  toToday: (): Task =>
+    Task.where('#actor returns to today', Click.on(byTestId('date-today'))),
 };
 
 /** Toggle an intention's completion for the currently shown day. */

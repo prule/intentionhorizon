@@ -12,12 +12,12 @@ import { By, PageElement, PageElements } from '@serenity-js/web';
 export const byTestId = (id: string) =>
   PageElement.located(By.css(`[data-testid="${id}"]`)).describedAs(`the ${id}`);
 
-/** A single intention row on the Today screen, keyed by intention name. */
+/** A single intention row on the Journal screen, keyed by intention name. */
 export const intentionRow = (name: string) =>
   PageElement.located(By.css(`[data-testid="intention-row"][data-intention-name="${name}"]`))
     .describedAs(`the "${name}" intention row`);
 
-/** All intention rows on the Today screen. */
+/** All intention rows on the Journal screen. */
 export const intentionRows = () =>
   PageElements.located(By.css('[data-testid="intention-row"]')).describedAs('the intention rows');
 

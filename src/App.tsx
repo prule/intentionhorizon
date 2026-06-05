@@ -15,8 +15,8 @@ import { Guide } from './screens/Guide';
 // URL is the source of truth for the active page. Readable slugs map to the
 // internal tab ids used throughout the app.
 const DEFAULT_TAB = 'entry';
-const TAB_TO_SLUG: Record<string, string> = { entry: 'today', analytics: 'insights', settings: 'manage' };
-const SLUG_TO_TAB: Record<string, string> = { today: 'entry', insights: 'analytics', manage: 'settings' };
+const TAB_TO_SLUG: Record<string, string> = { entry: 'journal', analytics: 'insights', settings: 'manage' };
+const SLUG_TO_TAB: Record<string, string> = { journal: 'entry', insights: 'analytics', manage: 'settings' };
 
 const tabToHash = (tab: string): string => `#/${TAB_TO_SLUG[tab] || TAB_TO_SLUG[DEFAULT_TAB]}`;
 // returns null for empty/unknown hashes
