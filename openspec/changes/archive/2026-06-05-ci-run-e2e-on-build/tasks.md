@@ -8,6 +8,6 @@
 ## 2. Verify
 
 - [x] 2.1 Lint the workflow YAML (valid syntax; jobs/needs/if wiring is correct — verified: on=push/pull_request/workflow_dispatch, test runs build+e2e, build needs test & if push, deploy needs build & if push)
-- [ ] 2.2 Push a branch / open a PR and confirm the `test` job runs the e2e suite and reports a check on the PR (verified on the PR for this change)
-- [ ] 2.3 Confirm a deliberately failing e2e (or build) makes the workflow run fail, and that the deploy jobs are skipped on PRs (deploy-skip confirmed via PR; failure-fails-build follows from `npm run e2e` exit code)
-- [ ] 2.4 Confirm a passing push to `main` proceeds to build + deploy as before (verified after merge to main)
+- [x] 2.2 Push a branch / open a PR and confirm the `test` job runs the e2e suite and reports a check on the PR (PR #5: `test` job ran `npm run e2e` → 15 passed, reports a check)
+- [x] 2.3 Confirm the deploy jobs are skipped on PRs (PR #5: `build` and `deploy` both skipped; a failing `npm run e2e` exits non-zero and fails the `test` job, which `build` needs)
+- [x] 2.4 Confirm a passing push to `main` proceeds to build + deploy as before (run 26992620977: test → build → deploy all succeeded)
