@@ -2,6 +2,7 @@
    ui.tsx — shared UI primitives
    ─────────────────────────────────────────────── */
 import React from 'react';
+import { createPortal } from 'react-dom';
 import * as IH from '../data/store';
 import { Icon } from './Icon';
 
@@ -111,7 +112,7 @@ export function Sheet({ open, onClose, title, children, footer }: {
   open: boolean; onClose: () => void; title: React.ReactNode; children?: React.ReactNode; footer?: React.ReactNode;
 }) {
   if (!open) return null;
-  return (
+  return createPortal(
     <div className="ih-sheet-scrim">
       <div className="ih-sheet-bg" onClick={onClose} />
       <div className="ih-sheet">
@@ -123,7 +124,8 @@ export function Sheet({ open, onClose, title, children, footer }: {
         <div className="ih-scroll" style={{ padding: '0 20px 16px', flex: 1 }}>{children}</div>
         {footer && <div style={{ padding: '12px 20px calc(12px + env(safe-area-inset-bottom))', borderTop: '1px solid var(--line-soft)', background: 'var(--surface)' }}>{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
