@@ -1,0 +1,392 @@
+Sample e2e run output:
+
+intentionhorizon % npm run e2e
+
+> intention-horizon@1.0.0 e2e
+> playwright test
+
+
+Running 15 tests using 4 workers
+
+      1 …e2e/specs/analytics.spec.ts:33:3 › Analytics correctness › streaks and totals reflect the seed, and filtering re-scopes them › Tess filters Insights by "Read" › Tess clicks on the "Read" filter chip
+      2 …ry-crud.spec.ts:22:3 › Managing categories › deleting a category reparents its intentions to Uncategorized › Tess deletes the category "Health" › Tess clicks on the edit button for category "Health"
+      3 [chromium] › e2e/specs/category-crud.spec.ts:7:3 › Managing categories › creates, renames, and deletes a category › Tess adds the category "Wellbeing" › Tess clicks on the add-category
+      4 [chromium] › e2e/specs/date-navigation.spec.ts:10:3 › Date navigation › moves to the previous day and back
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/date-navigation.spec.ts:10
+
+Date navigation: moves to the previous day and back
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (542ms)
+    ✓ Tess waits until the screen-entry does become visible (106ms)
+  ✓ Tess ensures that the visible date does equal "Today" (6ms)
+  ✓ Tess ensures that whether the actor can go to the next day does equal false (4ms)
+  Tess goes to the previous day
+    ✓ Tess clicks on the date-prev (112ms)
+  ✓ Tess ensures that the visible date does equal "Yesterday" (33ms)
+  Tess goes to the next day
+      1 [chromium] › e2e/specs/analytics.spec.ts:33:3 › Analytics correctness › streaks and totals reflect the seed, and filtering re-scopes them
+      2 …› e2e/specs/category-crud.spec.ts:22:3 › Managing categories › deleting a category reparents its intentions to Uncategorized › Tess deletes the category "Health" › Tess clicks on the delete-category
+      3 [chromium] › e2e/specs/category-crud.spec.ts:7:3 › Managing categories › creates, renames, and deletes a category › Tess adds the category "Wellbeing" › Tess clicks on the save-category
+  ✓   4 [chromium] › e2e/specs/date-navigation.spec.ts:10:3 › Date navigation › moves to the previous day and back (1.5s)
+      5 [chromium] › e2e/specs/date-navigation.spec.ts:23:3 › Date navigation › stops at the 7-day-back lower bound › Before Hooks › Fixture "openApp" › Tess opens the app
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/analytics.spec.ts:33
+
+Analytics correctness: streaks and totals reflect the seed, and filtering re-scopes them
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (551ms)
+    ✓ Tess waits until the screen-entry does become visible (106ms)
+  Tess goes to the analytics tab
+    ✓ Tess clicks on the tab-analytics (105ms)
+    ✓ Tess waits until the screen-insights does become visible (62ms)
+  ✓ Tess waits until the current streak value does equal 3 (29ms)
+  ✓ Tess waits until the best streak value does equal 3 (19ms)
+  ✓ Tess waits until the rate streak value does equal 13 (21ms)
+  ✓ Tess waits until the totals sum does equal 4 (24ms)
+  Tess filters Insights by "Read"
+    ✓ Tess clicks on the "Read" filter chip (313ms)
+  ✓ Tess waits until the rate streak value does equal 10 (15ms)
+  ✓ Tess waits until the totals sum does equal 3 (16ms)
+  ✓   1 [chromium] › e2e/specs/analytics.spec.ts:33:3 › Analytics correctness › streaks and totals reflect the seed, and filtering re-scopes them (2.0s)
+      2 [chromium] › e2e/specs/category-crud.spec.ts:22:3 › Managing categories › deleting a category reparents its intentions to Uncategorized
+      3 [chromium] › e2e/specs/category-crud.spec.ts:7:3 › Managing categories › creates, renames, and deletes a category › Tess renames category "Wellbeing" to "Wellness" › Tess clicks on the save-category
+
+      5 [chromium] › e2e/specs/date-navigation.spec.ts:23:3 › Date navigation › stops at the 7-day-back lower bound › Tess goes to the previous day › Tess clicks on the date-prev
+      6 …s/date-navigation.spec.ts:28:3 › Date navigation › shows a return-to-today control only off today, and it jumps back › Tess ensures that whether the return-to-today control is shown does equal false
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/category-crud.spec.ts:22
+
+Managing categories: deleting a category reparents its intentions to Uncategorized
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (549ms)
+    ✓ Tess waits until the screen-entry does become visible (95ms)
+  Tess goes to the settings tab
+    ✓ Tess clicks on the tab-settings (129ms)
+    ✓ Tess waits until the screen-settings does become visible (43ms)
+  Tess deletes the category "Health"
+    ✓ Tess clicks on the edit button for category "Health" (426ms)
+    ✓ Tess clicks on the delete-category (401ms)
+    ✓ Tess waits until the category-name does not become visible (289ms)
+  ✓ Tess ensures that the category names does not contain "Health" (18ms)
+  ✓ Tess ensures that the category names does contain "Uncategorized" (9ms)
+  Tess goes to the entry tab
+    ✓ Tess clicks on the tab-entry (55ms)
+  ✓   2 [chromium] › e2e/specs/category-crud.spec.ts:22:3 › Managing categories › deleting a category reparents its intentions to Uncategorized (2.7s)
+  ✓ Tess ensures that the intention names does contain "Read" (10ms)
+  ✓ Tess ensures that the intention names does contain "Workout" (8ms)
+      5 [chromium] › e2e/specs/date-navigation.spec.ts:23:3 › Date navigation › stops at the 7-day-back lower bound
+      6 [chromium] › e2e/specs/date-navigation.spec.ts:28:3 › Date navigation › shows a return-to-today control only off today, and it jumps back › Tess goes to the previous day
+      7 …vigation.spec.ts:41:3 › Date navigation › treats the legacy #/today hash as an unknown route and falls back to Journal › Before Hooks › Fixture "openApp" › Tess opens the app › Tess navigates to "/"
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/date-navigation.spec.ts:23
+
+Date navigation: stops at the 7-day-back lower bound
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (340ms)
+    ✓ Tess waits until the screen-entry does become visible (41ms)
+  Tess goes to the previous day
+    ✓ Tess clicks on the date-prev (168ms)
+  Tess goes to the previous day
+    ✓ Tess clicks on the date-prev (67ms)
+  Tess goes to the previous day
+    ✓ Tess clicks on the date-prev (59ms)
+  Tess goes to the previous day
+    ✓ Tess clicks on the date-prev (78ms)
+  Tess goes to the previous day
+    ✓ Tess clicks on the date-prev (76ms)
+  Tess goes to the previous day
+    ✓ Tess clicks on the date-prev (61ms)
+      3 …› e2e/specs/category-crud.spec.ts:7:3 › Managing categories › creates, renames, and deletes a category › Tess deletes the category "Wellness" › Tess clicks on the edit button for category "Wellness"
+    ✓ Tess clicks on the date-prev (74ms)
+  ✓   5 [chromium] › e2e/specs/date-navigation.spec.ts:23:3 › Date navigation › stops at the 7-day-back lower bound (1.3s)
+      6 [chromium] › e2e/specs/date-navigation.spec.ts:28:3 › Date navigation › shows a return-to-today control only off today, and it jumps back
+      7 [chromium] › e2e/specs/date-navigation.spec.ts:41:3 › Date navigation › treats the legacy #/today hash as an unknown route and falls back to Journal
+      8 [chromium] › e2e/specs/insights.spec.ts:9:3 › Insights tab › renders analytics and reflects the tab in the URL hash › Before Hooks › Fixture "openApp" › Tess opens the app › Tess navigates to "/"
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/date-navigation.spec.ts:28
+
+Date navigation: shows a return-to-today control only off today, and it jumps back
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (335ms)
+    ✓ Tess waits until the screen-entry does become visible (38ms)
+  ✓ Tess ensures that whether the return-to-today control is shown does equal false (260ms)
+  Tess goes to the previous day
+    ✓ Tess clicks on the date-prev (60ms)
+  ✓ Tess ensures that whether the return-to-today control is shown does equal true (10ms)
+  Tess returns to today
+    ✓ Tess clicks on the date-today (62ms)
+  ✓ Tess ensures that the visible date does equal "Today" (2ms)
+  ✓   6 [chromium] › e2e/specs/date-navigation.spec.ts:28:3 › Date navigation › shows a return-to-today control only off today, and it jumps back (1.2s)
+
+✓ Execution successful (1s 239ms)
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/date-navigation.spec.ts:41
+
+Date navigation: treats the legacy #/today hash as an unknown route and falls back to Journal
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (321ms)
+      3 [chromium] › e2e/specs/category-crud.spec.ts:7:3 › Managing categories › creates, renames, and deletes a category › Tess deletes the category "Wellness" › Tess clicks on the delete-category
+  ✓ Tess navigates to "/#/today" (2ms)
+  ✓ Tess waits until the screen-entry does become visible (23ms)
+  ✓ Tess ensures that the active tab does equal "journal" (9ms)
+  ✓   7 [chromium] › e2e/specs/date-navigation.spec.ts:41:3 › Date navigation › treats the legacy #/today hash as an unknown route and falls back to Journal (545ms)
+      8 [chromium] › e2e/specs/insights.spec.ts:9:3 › Insights tab › renders analytics and reflects the tab in the URL hash
+      9 [chromium] › e2e/specs/intention-crud.spec.ts:7:3 › Managing intentions › creates, renames, and deletes an intention › Before Hooks › Fixture "openApp" › Tess opens the app › Tess navigates to "/"
+     10 …um] › e2e/specs/log-completion.spec.ts:7:3 › Logging a completion › marks the intention done and bumps its 7-day count › Before Hooks › Fixture "openApp" › Tess opens the app › Tess navigates to "/"
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/insights.spec.ts:9
+
+Insights tab: renders analytics and reflects the tab in the URL hash
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (376ms)
+      3 [chromium] › e2e/specs/category-crud.spec.ts:7:3 › Managing categories › creates, renames, and deletes a category
+  Tess goes to the analytics tab
+    ✓ Tess clicks on the tab-analytics (80ms)
+    ✓ Tess waits until the screen-insights does become visible (52ms)
+  ✓ Tess ensures that the active tab does equal "insights" (1ms)
+  ✓   8 [chromium] › e2e/specs/insights.spec.ts:9:3 › Insights tab › renders analytics and reflects the tab in the URL hash (783ms)
+      9 [chromium] › e2e/specs/intention-crud.spec.ts:7:3 › Managing intentions › creates, renames, and deletes an intention › Tess adds the intention "Floss" › Tess clicks on the add-intention
+     10 [chromium] › e2e/specs/log-completion.spec.ts:7:3 › Logging a completion › marks the intention done and bumps its 7-day count
+     11 …on.spec.ts:19:3 › Logging a completion › toggling off reverts the completion and count › Before Hooks › Fixture "openApp" › Tess opens the app › Tess waits until the screen-entry does become visible
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/log-completion.spec.ts:7
+
+Logging a completion: marks the intention done and bumps its 7-day count
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (369ms)
+    ✓ Tess waits until the screen-entry does become visible (60ms)
+  ✓ Tess ensures that whether "Read" is complete does equal false (7ms)
+  ✓ Tess ensures that the window count for "Read" does equal 3 (15ms)
+  Tess logs "Read"
+    ✓ Tess clicks on the intention-toggle of the "Read" intention row (107ms)
+  ✓ Tess ensures that whether "Read" is complete does equal true (19ms)
+  ✓ Tess ensures that the window count for "Read" does equal 4 (12ms)
+  ✓  10 [chromium] › e2e/specs/log-completion.spec.ts:7:3 › Logging a completion › marks the intention done and bumps its 7-day count (804ms)
+✓ Execution successful (804ms)
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/category-crud.spec.ts:7
+
+Managing categories: creates, renames, and deletes a category
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (542ms)
+    ✓ Tess waits until the screen-entry does become visible (112ms)
+  Tess goes to the settings tab
+    ✓ Tess clicks on the tab-settings (102ms)
+    ✓ Tess waits until the screen-settings does become visible (65ms)
+  Tess adds the category "Wellbeing"
+    ✓ Tess clicks on the add-category (425ms)
+    ✓ Tess enters "Wellbeing" into the category-name (8ms)
+    ✓ Tess clicks on the save-category (298ms)
+    ✓ Tess waits until the category-name does not become visible (268ms)
+  ✓ Tess ensures that the category names does contain "Wellbeing" (12ms)
+  Tess renames category "Wellbeing" to "Wellness"
+    ✓ Tess clicks on the edit button for category "Wellbeing" (54ms)
+    ✓ Tess enters "Wellness" into the category-name (6ms)
+    ✓ Tess clicks on the save-category (402ms)
+    ✓ Tess waits until the category-name does not become visible (266ms)
+  ✓   3 [chromium] › e2e/specs/category-crud.spec.ts:7:3 › Managing categories › creates, renames, and deletes a category (4.1s)
+  ✓ Tess ensures that the category names does not contain "Wellbeing" (9ms)
+  Tess deletes the category "Wellness"
+    ✓ Tess clicks on the edit button for category "Wellness" (71ms)
+    ✓ Tess clicks on the delete-category (408ms)
+    ✓ Tess waits until the category-name does not become visible (271ms)
+      9 [chromium] › e2e/specs/intention-crud.spec.ts:7:3 › Managing intentions › creates, renames, and deletes an intention › Tess ensures that the intention names does contain "Floss"
+
+     11 …m] › e2e/specs/log-completion.spec.ts:19:3 › Logging a completion › toggling off reverts the completion and count › Tess logs "Read" › Tess clicks on the intention-toggle of the "Read" intention row
+     12 [chromium] › e2e/specs/persistence.spec.ts:7:3 › Persistence across reload › a logged completion survives a reload
+     13 [chromium] › e2e/specs/persistence.spec.ts:21:3 › Persistence across reload › a newly created intention survives a reload › Tess adds the intention "Floss" › Tess clicks on the add-intention
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/persistence.spec.ts:7
+
+Persistence across reload: a logged completion survives a reload
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (341ms)
+    ✓ Tess waits until the screen-entry does become visible (44ms)
+  Tess logs "Read"
+    ✓ Tess clicks on the intention-toggle of the "Read" intention row (217ms)
+  ✓ Tess ensures that whether "Read" is complete does equal true (6ms)
+  ✓ Tess ensures that the window count for "Read" does equal 4 (7ms)
+  Tess reloads the app
+    ✓ Tess reloads the page (195ms)
+      9 …hromium] › e2e/specs/intention-crud.spec.ts:7:3 › Managing intentions › creates, renames, and deletes an intention › Tess renames "Floss" to "Floss nightly" › Tess clicks on the "Floss" settings row
+  ✓ Tess ensures that whether "Read" is complete does equal true (8ms)
+     11 [chromium] › e2e/specs/log-completion.spec.ts:19:3 › Logging a completion › toggling off reverts the completion and count
+  ✓  12 [chromium] › e2e/specs/persistence.spec.ts:7:3 › Persistence across reload › a logged completion survives a reload (1.1s)
+     13 [chromium] › e2e/specs/persistence.spec.ts:21:3 › Persistence across reload › a newly created intention survives a reload › Tess adds the intention "Floss" › Tess clicks on the save-intention
+     14 …e2e/specs/targets.spec.ts:17:3 › Intention targets › a new intention with a weekly target shows it on Manage and Today › Before Hooks › Fixture "openApp" › Tess opens the app › Tess navigates to "/"
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/log-completion.spec.ts:19
+
+Logging a completion: toggling off reverts the completion and count
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (362ms)
+    ✓ Tess waits until the screen-entry does become visible (66ms)
+  Tess logs "Read"
+    ✓ Tess clicks on the intention-toggle of the "Read" intention row (162ms)
+  ✓ Tess ensures that whether "Read" is complete does equal true (12ms)
+      9 …/intention-crud.spec.ts:7:3 › Managing intentions › creates, renames, and deletes an intention › Tess renames "Floss" to "Floss nightly" › Tess waits until the intention-name does not become visible
+    ✓ Tess clicks on the intention-toggle of the "Read" intention row (968ms)
+  ✓  11 [chromium] › e2e/specs/log-completion.spec.ts:19:3 › Logging a completion › toggling off reverts the completion and count (1.8s)
+  ✓ Tess ensures that the window count for "Read" does equal 3 (53ms)
+     13 [chromium] › e2e/specs/persistence.spec.ts:21:3 › Persistence across reload › a newly created intention survives a reload
+     14 …rgets.spec.ts:17:3 › Intention targets › a new intention with a weekly target shows it on Manage and Today › Tess adds "Meditate" with a target of 5 within 7 days › Tess clicks on the targets-switch
+     15 …argets.spec.ts:33:3 › Intention targets › a target can span an arbitrary period (1 within 365 days) › Tess adds "Annual checkup" with a target of 1 within 365 days › Tess clicks on the add-intention
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/persistence.spec.ts:21
+
+Persistence across reload: a newly created intention survives a reload
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (329ms)
+    ✓ Tess waits until the screen-entry does become visible (60ms)
+  Tess goes to the settings tab
+    ✓ Tess clicks on the tab-settings (85ms)
+    ✓ Tess waits until the screen-settings does become visible (21ms)
+  Tess adds the intention "Floss"
+    ✓ Tess clicks on the add-intention (450ms)
+    ✓ Tess enters "Floss" into the intention-name (10ms)
+    ✓ Tess clicks on the save-intention (296ms)
+    ✓ Tess waits until the intention-name does not become visible (271ms)
+  Tess goes to the entry tab
+    ✓ Tess clicks on the tab-entry (69ms)
+    ✓ Tess waits until the screen-entry does become visible (50ms)
+      9 [chromium] › e2e/specs/intention-crud.spec.ts:7:3 › Managing intentions › creates, renames, and deletes an intention › Tess deletes the intention "Floss nightly" › Tess clicks on the delete-intention
+  Tess reloads the app
+    ✓ Tess reloads the page (180ms)
+    ✓ Tess waits until the screen-entry does become visible (45ms)
+  ✓  13 [chromium] › e2e/specs/persistence.spec.ts:21:3 › Persistence across reload › a newly created intention survives a reload (2.3s)
+     14 [chromium] › e2e/specs/targets.spec.ts:17:3 › Intention targets › a new intention with a weekly target shows it on Manage and Today
+     15 …tion targets › a target can span an arbitrary period (1 within 365 days) › Tess adds "Annual checkup" with a target of 1 within 365 days › Tess waits until the intention-name does not become visible
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/targets.spec.ts:17
+
+Intention targets: a new intention with a weekly target shows it on Manage and Today
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (332ms)
+    ✓ Tess waits until the screen-entry does become visible (43ms)
+  Tess goes to the settings tab
+    ✓ Tess clicks on the tab-settings (79ms)
+    ✓ Tess waits until the screen-settings does become visible (63ms)
+  Tess adds "Meditate" with a target of 5 within 7 days
+    ✓ Tess clicks on the add-intention (448ms)
+    ✓ Tess enters "Meditate" into the intention-name (7ms)
+    ✓ Tess clicks on the targets-switch (292ms)
+    ✓ Tess clicks on the target-completions-inc (71ms)
+    ✓ Tess clicks on the target-completions-inc (68ms)
+    ✓ Tess clicks on the save-intention (70ms)
+    ✓ Tess waits until the intention-name does not become visible (265ms)
+  ✓ Tess ensures that the target badge for "Meditate" does equal "5/7d" (13ms)
+  Tess goes to the entry tab
+      9 …tention-crud.spec.ts:7:3 › Managing intentions › creates, renames, and deletes an intention › Tess deletes the intention "Floss nightly" › Tess waits until the intention-name does not become visible
+    ✓ Tess waits until the screen-entry does become visible (25ms)
+  ✓ Tess ensures that the window count for "Meditate" does equal 0 (10ms)
+  ✓ Tess ensures that <<the text of the stat-target of the "Meditate" intention row>>.toLocaleLowerCase() does include "/5" (4ms)
+  ✓ Tess ensures that <<the text of the stat-target of the "Meditate" intention row>>.toLocaleLowerCase() does include "7d" (4ms)
+  ✓  14 [chromium] › e2e/specs/targets.spec.ts:17:3 › Intention targets › a new intention with a weekly target shows it on Manage and Today (2.2s)
+     15 [chromium] › e2e/specs/targets.spec.ts:33:3 › Intention targets › a target can span an arbitrary period (1 within 365 days)
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/targets.spec.ts:33
+
+Intention targets: a target can span an arbitrary period (1 within 365 days)
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (337ms)
+    ✓ Tess waits until the screen-entry does become visible (59ms)
+  Tess goes to the settings tab
+    ✓ Tess clicks on the tab-settings (84ms)
+    ✓ Tess waits until the screen-settings does become visible (72ms)
+  Tess adds "Annual checkup" with a target of 1 within 365 days
+    ✓ Tess clicks on the add-intention (408ms)
+    ✓ Tess enters "Annual checkup" into the intention-name (5ms)
+    ✓ Tess clicks on the targets-switch (402ms)
+    ✓ Tess clicks on the target-completions-dec (68ms)
+    ✓ Tess clicks on the target-completions-dec (70ms)
+    ✓ Tess enters "365" into the target-period (6ms)
+    ✓ Tess clicks on the save-intention (77ms)
+    ✓ Tess waits until the intention-name does not become visible (272ms)
+  ✓ Tess ensures that the target badge for "Annual checkup" does equal "1/365d" (11ms)
+      9 [chromium] › e2e/specs/intention-crud.spec.ts:7:3 › Managing intentions › creates, renames, and deletes an intention
+    ✓ Tess clicks on the tab-entry (63ms)
+    ✓ Tess waits until the screen-entry does become visible (22ms)
+  ✓ Tess ensures that <<the text of the stat-target of the "Annual checkup" intention row>>.toLocaleLowerCase() does include "/1" (3ms)
+  ✓ Tess ensures that <<the text of the stat-target of the "Annual checkup" intention row>>.toLocaleLowerCase() does include "365d" (2ms)
+
+  ✓  15 [chromium] › e2e/specs/targets.spec.ts:33:3 › Intention targets › a target can span an arbitrary period (1 within 365 days) (2.4s)
+--------------------------------------------------------------------------------
+/intentionhorizon/e2e/specs/intention-crud.spec.ts:7
+
+Managing intentions: creates, renames, and deletes an intention
+
+  Tess opens the app
+    ✓ Tess navigates to "/" (334ms)
+    ✓ Tess waits until the screen-entry does become visible (78ms)
+  Tess goes to the settings tab
+    ✓ Tess clicks on the tab-settings (81ms)
+    ✓ Tess waits until the screen-settings does become visible (47ms)
+  Tess adds the intention "Floss"
+    ✓ Tess clicks on the add-intention (437ms)
+    ✓ Tess enters "Floss" into the intention-name (7ms)
+    ✓ Tess clicks on the save-intention (310ms)
+    ✓ Tess waits until the intention-name does not become visible (278ms)
+  Tess goes to the entry tab
+    ✓ Tess clicks on the tab-entry (71ms)
+    ✓ Tess waits until the screen-entry does become visible (31ms)
+  ✓ Tess ensures that the intention names does contain "Floss" (49ms)
+  Tess goes to the settings tab
+    ✓ Tess clicks on the tab-settings (78ms)
+    ✓ Tess waits until the screen-settings does become visible (37ms)
+  Tess renames "Floss" to "Floss nightly"
+    ✓ Tess clicks on the "Floss" settings row (425ms)
+    ✓ Tess enters "Floss nightly" into the intention-name (10ms)
+    ✓ Tess clicks on the save-intention (399ms)
+    ✓ Tess waits until the intention-name does not become visible (266ms)
+  Tess goes to the entry tab
+    ✓ Tess clicks on the tab-entry (62ms)
+    ✓ Tess waits until the screen-entry does become visible (23ms)
+  ✓ Tess ensures that the intention names does contain "Floss nightly" (9ms)
+  ✓ Tess ensures that the intention names does not contain "Floss" (9ms)
+  Tess goes to the settings tab
+    ✓ Tess clicks on the tab-settings (61ms)
+    ✓ Tess waits until the screen-settings does become visible (25ms)
+  Tess deletes the intention "Floss nightly"
+    ✓ Tess clicks on the "Floss nightly" settings row (423ms)
+    ✓ Tess clicks on the delete-intention (401ms)
+  ✓   9 [chromium] › e2e/specs/intention-crud.spec.ts:7:3 › Managing intentions › creates, renames, and deletes an intention (4.9s)
+  Tess goes to the entry tab
+    ✓ Tess clicks on the tab-entry (64ms)
+    ✓ Tess waits until the screen-entry does become visible (24ms)
+  ✓ Tess ensures that the intention names does not contain "Floss nightly" (9ms)
+
+✓ Execution successful (4s 918ms)
+================================================================================
+Execution Summary
+
+Analytics correctness:     1 successful, 1 total (1s 957ms)
+Date navigation:           4 successful, 4 total (4s 578ms)
+Insights tab:              1 successful, 1 total (783ms)
+Intention targets:         2 successful, 2 total (4s 605ms)
+Logging a completion:      2 successful, 2 total (2s 652ms)
+Managing categories:       2 successful, 2 total (6s 842ms)
+Managing intentions:       1 successful, 1 total (4s 918ms)
+Persistence across reload: 2 successful, 2 total (3s 437ms)
+
+Total time: 29s 772ms
+Real time: 9s 637ms
+Scenarios:  15
+================================================================================
+
+  15 passed (10.2s)
+intentionhorizon %
