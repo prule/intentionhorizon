@@ -1,8 +1,9 @@
-name: Deploy to GitHub Pages
+name: CI & Deploy
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 # Allow GITHUB_TOKEN to deploy to Pages
@@ -17,7 +18,34 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Build the app and run the e2e suite on every push and pull request.
+  # A failing build or e2e test fails this job, which gates the deploy below.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # Only Chromium is configured in playwright.config.ts.
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run build
+
+      # Playwright starts its own dev server (CI=true disables reuse), and the
+      # e2e seed hook is gated behind import.meta.env.DEV, so tests run against
+      # the dev server rather than the production build.
+      - run: npm run e2e
+
   build:
+    # Only build/deploy Pages on pushes to main, and only after tests pass.
+    if: github.event_name == 'push'
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,6 +64,7 @@ jobs:
           path: dist
 
   deploy:
+    if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
     environment:
