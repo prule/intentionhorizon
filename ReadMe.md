@@ -1,5 +1,7 @@
 # Intention Horizon
 
+> Try It: https://intention.vamonossoftware.com/#/journal
+
 **Intention Horizon** is a high-density, minimalist Progressive Web App (PWA) designed for utilitarian habit tracking. It focuses on the intentional completion of daily goals rather than passive habit formation, providing users with immediate feedback through data-rich grids and consistency visualizations.
 
 [Project Brief](project_brief_intention_horizon.md)
