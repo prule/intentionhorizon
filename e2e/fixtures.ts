@@ -32,7 +32,7 @@ export const defaultSeed: E2ESeedSpec = {
 export const { describe, it, test, beforeEach, beforeAll, afterEach, afterAll, expect } = useFixtures<{
   /** Override the seed for a specific test before the actor opens the app. */
   seed: E2ESeedSpec;
-  /** Auto fixture: opens the freshly-seeded app on the Today screen per test. */
+  /** Auto fixture: opens the freshly-seeded app on the Journal screen per test. */
   openApp: void;
 }>({
   seed: [defaultSeed, { option: true }],

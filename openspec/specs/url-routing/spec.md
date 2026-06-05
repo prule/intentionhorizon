@@ -2,16 +2,16 @@
 
 ## Purpose
 
-The active page (Today / Insights / Manage) is encoded in the browser URL via a readable hash, making the URL the source of truth for navigation. This lets reloads and deep links resolve to the correct page, enables browser Back/Forward between pages, and falls back cleanly to the default page for unknown routes.
+The active page (Journal / Insights / Manage) is encoded in the browser URL via a readable hash, making the URL the source of truth for navigation. This lets reloads and deep links resolve to the correct page, enables browser Back/Forward between pages, and falls back cleanly to the default page for unknown routes.
 
 ## Requirements
 
 ### Requirement: Pages map to URL hashes
-The system SHALL map each main page to a unique, readable URL hash: Today to `#/today`, Insights to `#/insights`, and Manage to `#/manage`.
+The system SHALL map each main page to a unique, readable URL hash: Journal to `#/journal`, Insights to `#/insights`, and Manage to `#/manage`.
 
 #### Scenario: Each page has a distinct hash
-- **WHEN** the user is on the Today, Insights, or Manage page
-- **THEN** the URL hash is `#/today`, `#/insights`, or `#/manage` respectively
+- **WHEN** the user is on the Journal, Insights, or Manage page
+- **THEN** the URL hash is `#/journal`, `#/insights`, or `#/manage` respectively
 
 ### Requirement: URL is the source of truth for the active page
 The system SHALL derive the active page from the current URL hash, both on initial load and whenever the hash changes.
@@ -47,16 +47,16 @@ The system SHALL allow the browser Back and Forward buttons to move between prev
 - **THEN** the previously visited page is shown
 
 ### Requirement: Unknown or empty route falls back to the default page
-The system SHALL show the default page (Today) when the URL hash is empty or does not name a known page, normalizing the URL without creating a spurious history entry.
+The system SHALL show the default page (Journal) when the URL hash is empty or does not name a known page, normalizing the URL without creating a spurious history entry.
 
 #### Scenario: Empty hash shows the default page
 - **WHEN** the app is opened with no hash
-- **THEN** the Today page is shown
-- **AND** the URL is normalized to the Today hash
+- **THEN** the Journal page is shown
+- **AND** the URL is normalized to the Journal hash
 
 #### Scenario: Unknown hash shows the default page
-- **WHEN** the app is opened with a hash that does not name a known page
-- **THEN** the Today page is shown
+- **WHEN** the app is opened with a hash that does not name a known page (including the former `#/today`)
+- **THEN** the Journal page is shown
 - **AND** pressing Back does not return to the unknown hash
 
 ### Requirement: Upgrade continuity from legacy stored page

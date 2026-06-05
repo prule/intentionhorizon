@@ -18,6 +18,7 @@ function DateNav({ date, setDate }: { date: Date; setDate: (d: Date) => void }) 
   const minDate = IH.addDays(t, -7); // toggling allowed up to 7 days prior
   const canPrev = date > minDate;
   const canNext = date < t;
+  const isToday = IH.sameKey(date, t); // hide the return-to-today control on today
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 20px 14px' }}>
@@ -29,6 +30,13 @@ function DateNav({ date, setDate }: { date: Date; setDate: (d: Date) => void }) 
           {IH.WD[date.getDay()]}, {IH.MONTHS[date.getMonth()]} {date.getDate()}
         </div>
       </div>
+      {!isToday && (
+        <button className="ih-btn" data-testid="date-today" aria-label="Return to today" onClick={() => setDate(t)}
+          style={{
+            height: 40, padding: '0 14px', borderRadius: 12, fontSize: 13, fontWeight: 700, letterSpacing: '-0.01em',
+            background: 'var(--surface)', border: '1px solid var(--line-soft)', color: 'var(--ink-2)', boxShadow: 'var(--shadow-card)',
+          }}>Today</button>
+      )}
       <button className="ih-btn" data-testid="date-next" disabled={!canNext} onClick={() => canNext && setDate(IH.addDays(date, 1))}
         style={navBtn(canNext)}><Icon.chevR /></button>
     </div>
@@ -80,7 +88,7 @@ export function EntryScreen({ date, setDate, version, bump, openGuide }: {
 
   return (
     <div className="ih-scroll fade-up" data-testid="screen-entry" key={version} style={{ paddingBottom: 24 }}>
-      <ScreenHeader title="Today" subtitle={`${doneToday} of ${total} intentions complete`} right={
+      <ScreenHeader title="Journal" subtitle={`${doneToday} of ${total} intentions complete`} right={
         openGuide ? (
           <button className="ih-btn" onClick={openGuide} aria-label="User guide" style={{
             width: 40, height: 40, borderRadius: 12, background: 'var(--surface)', border: '1px solid var(--line-soft)',

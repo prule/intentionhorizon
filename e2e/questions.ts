@@ -2,7 +2,7 @@ import { Question } from '@serenity-js/core';
 import { Attribute, Page, Text } from '@serenity-js/web';
 import { byTestId, categorySections, intentionRow, intentionRows, targetBadge } from './elements';
 
-/** The active tab as reflected in the URL hash slug (today | insights | manage). */
+/** The active tab as reflected in the URL hash slug (journal | insights | manage). */
 export const ActiveTab = {
   current: () =>
     Question.about('the active tab', async (actor) => {
@@ -11,7 +11,7 @@ export const ActiveTab = {
     }),
 };
 
-/** The human-readable label shown by the Today screen's date navigator. */
+/** The human-readable label shown by the Journal screen's date navigator. */
 export const VisibleDate = {
   label: () => Text.of(byTestId('date-label')).describedAs('the visible date'),
 };
@@ -34,7 +34,7 @@ export const WindowCount = {
     }),
 };
 
-/** Whether the Today screen's previous/next date button is currently enabled. */
+/** Whether the Journal screen's previous/next date button is currently enabled. */
 const canNavigate = (dir: 'prev' | 'next') =>
   Question.about(`whether the actor can go to the ${dir} day`, async (actor) =>
     (await byTestId(`date-${dir}`).answeredBy(actor)).isEnabled(),
@@ -45,7 +45,15 @@ export const CanNavigate = {
   next: () => canNavigate('next'),
 };
 
-/** The names of all intentions currently listed on the Today screen. */
+/** Whether the Journal screen's return-to-today control is currently shown. */
+export const ReturnToToday = {
+  isShown: () =>
+    Question.about('whether the return-to-today control is shown', async (actor) =>
+      (await byTestId('date-today').answeredBy(actor)).isPresent(),
+    ),
+};
+
+/** The names of all intentions currently listed on the Journal screen. */
 export const IntentionList = {
   names: () =>
     Question.about('the intention names', (actor) =>

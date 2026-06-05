@@ -252,7 +252,7 @@ export function DragList<T>({ items, getKey, renderItem, onReorder }: {
 // ── tab bar ──
 export function TabBar({ tab, setTab }: { tab: string; setTab: (tab: string) => void }) {
   const tabs = [
-    { id: 'entry', label: 'Today', icon: Icon.entry },
+    { id: 'entry', label: 'Journal', icon: Icon.entry },
     { id: 'analytics', label: 'Insights', icon: Icon.analytics },
     { id: 'settings', label: 'Manage', icon: Icon.settings },
   ];
@@ -287,7 +287,7 @@ export function useMedia(query: string): boolean {
 // ── desktop sidebar navigation ──
 export function Sidebar({ tab, setTab, openGuide }: { tab: string; setTab: (tab: string) => void; openGuide: () => void }) {
   const items = [
-    { id: 'entry', label: 'Today', icon: Icon.entry },
+    { id: 'entry', label: 'Journal', icon: Icon.entry },
     { id: 'analytics', label: 'Insights', icon: Icon.analytics },
     { id: 'settings', label: 'Manage', icon: Icon.settings },
   ];

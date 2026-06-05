@@ -62,12 +62,12 @@ export function Guide({ onClose }: { onClose: () => void }) {
         <p style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--ink-2)', margin: '4px 0 26px' }}>
           Intention Horizon helps you define the things you want to do regularly, tick them off as you go,
           and see how your last weeks are trending. There are three places to spend your time:
-          <strong style={{ color: 'var(--ink)' }}> Today</strong>,
+          <strong style={{ color: 'var(--ink)' }}> Journal</strong>,
           <strong style={{ color: 'var(--ink)' }}> Insights</strong>, and
           <strong style={{ color: 'var(--ink)' }}> Manage</strong>.
         </p>
 
-        <GBlock n="1" title="Log your day on Today">
+        <GBlock n="1" title="Log your day on Journal">
           Your intentions are grouped by category. Tap the circle beside one to mark it complete for the
           selected day — tap again to undo. Use the arrows to step back up to <strong>7 days</strong> if you
           forgot to log something.
@@ -126,7 +126,7 @@ export function Guide({ onClose }: { onClose: () => void }) {
           Add intentions with the <strong>+</strong> button — give each a name, category, colour and optional
           targets. Tap any intention to edit or delete it. Add and rename categories from here too.
           <GExample>
-            <ExRow label="Press and hold the grip, then drag to reorder intentions within a category — or reorder whole categories. The order carries over to Today.">
+            <ExRow label="Press and hold the grip, then drag to reorder intentions within a category — or reorder whole categories. The order carries over to Journal.">
               <span style={{ color: 'var(--ink-4)', display: 'flex' }}><Icon.grip /></span>
             </ExRow>
           </GExample>
