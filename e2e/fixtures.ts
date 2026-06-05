@@ -39,6 +39,10 @@ export const { describe, it, test, beforeEach, beforeAll, afterEach, afterAll, e
   page: async ({ page, seed }, use) => {
     await page.addInitScript((s) => {
       (window as unknown as { __IH_E2E_SEED__: E2ESeedSpec }).__IH_E2E_SEED__ = s;
+      // Pre-decide analytics consent so the first-run consent banner never
+      // mounts and overlays elements under test (e.g. a low-positioned save
+      // button). Key/values mirror src/consent.ts; 'denied' keeps GA off.
+      localStorage.setItem('ih-consent', 'denied');
     }, seed);
     await use(page);
   },
