@@ -5,6 +5,7 @@ import React from 'react';
 import * as IH from '../data/store';
 import { Icon } from '../components/Icon';
 import { Sheet, PrimaryButton, DragList, ScreenHeader, type DragHandleProps } from '../components/ui';
+import { getStoredConsent, setConsent } from '../consent';
 
 function ColorPicker({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   return (
@@ -221,6 +222,21 @@ function DataSourceSwitcher({ bump }: { bump: () => void }) {
   );
 }
 
+function AnalyticsConsent() {
+  // null (undecided) is treated as off, matching the default-denied consent state.
+  const [on, setOn] = React.useState(() => getStoredConsent() === 'granted');
+  const toggle = () => { const next = !on; setOn(next); setConsent(next ? 'granted' : 'denied'); };
+  return (
+    <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius)', boxShadow: 'var(--shadow-card)', border: '1px solid var(--line-soft)', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink-2)' }}>Usage analytics</div>
+        <div style={{ fontSize: 12.5, color: 'var(--ink-3)', marginTop: 1 }}>Anonymous analytics cookies to improve the app. Your intentions never leave this device.</div>
+      </div>
+      <Switch on={on} onToggle={toggle} testid="analytics-consent" />
+    </div>
+  );
+}
+
 export function SettingsScreen({ bump, openGuide }: { version: number; bump: () => void; openGuide: () => void }) {
   const s = IH.load();
   const [intentEditor, setIntentEditor] = React.useState<{ open: boolean; editing: IH.Intention | null }>({ open: false, editing: null });
@@ -287,6 +303,7 @@ export function SettingsScreen({ bump, openGuide }: { version: number; bump: () 
 
       <div style={{ padding: '4px 14px 0', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {IH.mockEnabled() && <DataSourceSwitcher bump={bump} />}
+        <AnalyticsConsent />
         <RowButton label="User guide" onClick={openGuide} icon={<Icon.help />} />
         <RowButton label="Add category" testid="add-category" onClick={() => setCatEditor({ open: true, editing: null })} icon={<Icon.plus style={{ width: 18, height: 18 }} />} />
         <RowButton label="Export data as CSV" onClick={() => IH.downloadCSV()} icon={<Icon.download />} />

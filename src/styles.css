@@ -226,6 +226,32 @@ input.ih-input:focus, select.ih-select:focus {
 }
 
 
+/* ── consent banner ── */
+.consent-banner {
+  position: fixed; z-index: 150;
+  /* Center via auto margins (not translateX) so the popIn transform,
+     which resets transform to none, can't knock it off-center. */
+  left: 12px; right: 12px; margin-inline: auto;
+  max-width: 560px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 13px;
+  animation: popIn 0.26s cubic-bezier(0.32,0.72,0,1) both;
+}
+.consent-text { font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+.consent-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.consent-btn { padding: 9px 18px; border-radius: 11px; font-size: 14px; font-weight: 600; }
+.consent-decline { background: var(--bg-2); color: var(--ink-2); border: 1px solid var(--line-soft); }
+.consent-accept { background: var(--ink); color: #fff; }
+/* On mobile, sit above the bottom tab bar. */
+@media (max-width: 879px) {
+  .consent-banner { bottom: calc(86px + env(safe-area-inset-bottom)); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
