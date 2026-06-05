@@ -1,6 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Consent Mode v2 — default to denied until the user chooses (EU-safe).
+       Must run BEFORE gtag.js loads. Until consent is granted, GA4 runs in
+       cookieless mode (no identifiers stored). The in-app banner flips
+       analytics_storage to 'granted' via gtag('consent','update', …). -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      wait_for_update: 500
+    });
+    // Re-apply a previously stored choice on load (before GA initialises),
+    // so returning visitors aren't asked again and their consent persists.
+    try {
+      var ihc = localStorage.getItem('ih-consent');
+      if (ihc === 'granted' || ihc === 'denied') {
+        gtag('consent', 'update', { analytics_storage: ihc });
+      }
+    } catch (e) { /* storage blocked — stay denied */ }
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VKQ80FSZL1"></script>
+  <script>
+    gtag('js', new Date());
+    gtag('config', 'G-VKQ80FSZL1');
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#f6f3ee" />
