@@ -35,6 +35,20 @@ function ExRow({ children, label }: { children?: React.ReactNode; label: React.R
   );
 }
 
+// one example category with a few illustrative intentions beneath it
+function ExCategory({ name, items }: { name: string; items: { color: string; label: React.ReactNode; note?: React.ReactNode }[] }) {
+  return (
+    <div style={{ padding: '3px 0' }}>
+      <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--ink-3)', margin: '4px 0 2px' }}>{name}</div>
+      {items.map((it, i) => (
+        <ExRow key={i} label={<><span style={{ color: 'var(--ink-2)' }}>{it.label}</span>{it.note ? <span style={{ color: 'var(--ink-4)' }}> · {it.note}</span> : null}</>}>
+          <span style={{ width: 9, height: 9, borderRadius: 99, background: it.color, display: 'block' }} />
+        </ExRow>
+      ))}
+    </div>
+  );
+}
+
 export function Guide({ onClose }: { onClose: () => void }) {
   // lock background scroll while open
   React.useEffect(() => {
@@ -67,7 +81,33 @@ export function Guide({ onClose }: { onClose: () => void }) {
           <strong style={{ color: 'var(--ink)' }}> Manage</strong>.
         </p>
 
-        <GBlock n="1" title="Log your day on Journal">
+        <GBlock n="1" title="Start with a few examples">
+          New here? You build your own categories and intentions in Manage — but it's easier with a
+          picture. Here's a small, balanced starting set. Borrow what fits, skip what doesn't.
+          <GExample>
+            <ExCategory name="Movement" items={[
+              { color: 'var(--c-clay)', label: 'Workout', note: '4×/week' },
+              { color: 'var(--c-moss)', label: 'Walk 8k steps', note: '6×/week' },
+            ]} />
+            <ExCategory name="Mind" items={[
+              { color: 'var(--c-teal)', label: 'Meditate', note: '5×/week' },
+              { color: 'var(--c-blue)', label: 'Read 20 min', note: 'most days' },
+            ]} />
+            <ExCategory name="Finance" items={[
+              { color: 'var(--c-sage)', label: 'Invest', note: 'once in 30 days' },
+              { color: 'var(--c-rose)', label: 'No-spend day', note: '3×/week' },
+            ]} />
+            <ExCategory name="Connection" items={[
+              { color: 'var(--c-amber)', label: 'Call someone', note: 'no target — just track it' },
+            ]} />
+          </GExample>
+          <div style={{ marginTop: 10 }}>
+            Notice the range: a near-daily walk, a weekly workout, and an <strong>occasional</strong> "invest
+            once in 30 days." Targets can be as frequent or as rare as you like.
+          </div>
+        </GBlock>
+
+        <GBlock n="2" title="Log your day on Journal">
           Your intentions are grouped by category. Tap the circle beside one to mark it complete for the
           selected day — tap again to undo. Use the arrows to step back up to <strong>7 days</strong> if you
           forgot to log something.
@@ -78,7 +118,7 @@ export function Guide({ onClose }: { onClose: () => void }) {
           <div style={{ marginTop: 10 }}>The thin row of dots under each name is your last 30 days at a glance.</div>
         </GBlock>
 
-        <GBlock n="2" title="Totals & targets">
+        <GBlock n="3" title="Totals & targets">
           Each intention shows a rolling count over its target period. A target is a number of completions
           within a number of days — say <strong>3 times in 7 days</strong>, or <strong>once in 365</strong>.
           The number tells you where you stand against it:
@@ -102,7 +142,7 @@ export function Guide({ onClose }: { onClose: () => void }) {
           <div style={{ marginTop: 10 }}>Targets are optional — turn them on per intention in Manage.</div>
         </GBlock>
 
-        <GBlock n="3" title="Read the Insights heatmap">
+        <GBlock n="4" title="Read the Insights heatmap">
           The grid shows one square per day across the last 13 weeks. The <strong>number</strong> is how many
           intentions you completed that day; the <strong>fill strength</strong> reflects how many of your
           targets were being met — faint when you're under, strong when you're hitting them.
@@ -122,7 +162,7 @@ export function Guide({ onClose }: { onClose: () => void }) {
           </div>
         </GBlock>
 
-        <GBlock n="4" title="Organise in Manage">
+        <GBlock n="5" title="Organise in Manage">
           Add intentions with the <strong>+</strong> button — give each a name, category, colour and optional
           targets. Tap any intention to edit or delete it. Add and rename categories from here too.
           <GExample>
@@ -132,7 +172,7 @@ export function Guide({ onClose }: { onClose: () => void }) {
           </GExample>
         </GBlock>
 
-        <GBlock n="5" title="Your data stays yours">
+        <GBlock n="6" title="Your data stays yours">
           Everything is saved locally on this device — no account, no cloud. You can
           <strong> export a CSV</strong> of your history anytime from Insights or Manage. Because it's a
           installable web app, it also keeps working <strong>offline</strong>; add it to your home screen
