@@ -211,9 +211,9 @@ input.ih-input:focus, select.ih-select:focus {
 
 /* ── responsive sheet / modal ── */
 .ih-sheet-scrim { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; justify-content: flex-end; }
-.ih-sheet-bg { position: absolute; inset: 0; background: oklch(0.3 0.02 70 / 0.32); animation: scrimIn 0.2s ease both; }
+.ih-sheet-bg { position: absolute; inset: 0; background: oklch(0.3 0.02 70 / 0.22); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); animation: scrimIn 0.2s ease both; }
 .ih-sheet {
-  position: relative; background: var(--bg);
+  position: relative; background: var(--bg); overflow: hidden;
   border-radius: 26px 26px 0 0; padding: 10px 0 0;
   max-height: 88%; display: flex; flex-direction: column;
   animation: sheetIn 0.34s cubic-bezier(0.32,0.72,0,1) both;
