@@ -87,7 +87,10 @@ export function EntryScreen({ date, setDate, version, bump, openGuide }: {
     .filter((g) => (intentsByCat[g.id] || []).length);
 
   return (
-    <div className="ih-scroll fade-up" data-testid="screen-entry" key={version} style={{ paddingBottom: 24 }}>
+    // No `key={version}` here: a changing key would remount the scroll subtree on
+    // every data mutation and reset scrollTop. The `version` prop change still
+    // re-renders this component (re-running IH.load() above) without losing scroll.
+    <div className="ih-scroll fade-up" data-testid="screen-entry" style={{ paddingBottom: 24 }}>
       <ScreenHeader title="Journal" subtitle={`${doneToday} of ${total} intentions complete`} right={
         openGuide ? (
           <button className="ih-btn" onClick={openGuide} aria-label="User guide" style={{
