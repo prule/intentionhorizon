@@ -553,3 +553,140 @@ export function downloadCSV(): void {
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+// ── CSV import ──
+// Inverse of toCSV(): reconstruct categories/intentions/completions from the
+// export long-format. The format is lossy (names + completed days only — no
+// ids, colors, or targets), so new items get defaulted color/targets and
+// everything is merged into the active source by name.
+
+type ParsedRow = { date: string; category: string; intention: string };
+type ParseResult = { rows: ParsedRow[]; skipped: number; error?: string };
+export type ImportResult = {
+  ok: boolean;
+  error?: string;
+  categoriesAdded: number;
+  intentionsAdded: number;
+  daysAdded: number;
+  rowsSkipped: number;
+};
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+// A valid key is the shape AND a real calendar date — parseKey/dateKey round-trip
+// rejects rollovers like 2026-13-99 that the shape regex alone would accept.
+function isValidDateKey(k: string): boolean {
+  if (!DATE_RE.test(k)) return false;
+  const d = parseKey(k);
+  return !Number.isNaN(d.getTime()) && dateKey(d) === k;
+}
+
+// Split CSV text into a grid of fields, mirroring toCSV()'s escaping:
+// fields wrapped in quotes when they contain `",\n`, and `"` doubled inside.
+// Tolerates CRLF and a trailing newline.
+function parseCSVGrid(text: string): string[][] {
+  const rows: string[][] = [];
+  let field = '';
+  let row: string[] = [];
+  let inQuotes = false;
+  let started = false; // any char seen for the current record?
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; } else inQuotes = false;
+      } else field += ch;
+    } else if (ch === '"') { inQuotes = true; started = true; }
+    else if (ch === ',') { row.push(field); field = ''; started = true; }
+    else if (ch === '\n') { row.push(field); rows.push(row); row = []; field = ''; started = false; }
+    else if (ch === '\r') { /* swallow CR (CRLF) */ }
+    else { field += ch; started = true; }
+  }
+  if (started || field !== '' || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+// Parse export-format CSV. Returns a hard error only for an unusable file
+// (empty / missing required header columns). Row-level problems (bad date,
+// falsy `completed`) drop the row and increment `skipped`.
+export function parseCSV(text: string): ParseResult {
+  const grid = parseCSVGrid(text);
+  if (grid.length === 0) return { rows: [], skipped: 0, error: 'File is empty' };
+  const header = grid[0].map((h) => h.trim().toLowerCase());
+  const idx: Record<string, number> = {};
+  for (const col of ['date', 'category', 'intention', 'completed']) {
+    const at = header.indexOf(col);
+    if (at === -1) return { rows: [], skipped: 0, error: `Missing required column: ${col}` };
+    idx[col] = at;
+  }
+  const rows: ParsedRow[] = [];
+  let skipped = 0;
+  for (let r = 1; r < grid.length; r++) {
+    const g = grid[r];
+    if (g.every((c) => c.trim() === '')) continue; // blank line
+    const date = (g[idx.date] ?? '').trim();
+    const completed = (g[idx.completed] ?? '').trim().toLowerCase();
+    if (!isValidDateKey(date)) { skipped++; continue; }
+    if (!completed || completed === '0' || completed === 'false') { skipped++; continue; }
+    rows.push({ date, category: (g[idx.category] ?? '').trim(), intention: (g[idx.intention] ?? '').trim() });
+  }
+  return { rows, skipped };
+}
+
+// Import export-format CSV into the active source. Builds the next AppState on
+// copies first, so a parse failure leaves the store untouched; only on success
+// is the cache swapped and persisted (persistAll writes all tables atomically).
+// Merge is by trimmed, case-insensitive name; completed days are unioned.
+export function importCSV(text: string): ImportResult {
+  const empty: ImportResult = { ok: false, categoriesAdded: 0, intentionsAdded: 0, daysAdded: 0, rowsSkipped: 0 };
+  const parsed = parseCSV(text);
+  if (parsed.error) return { ...empty, error: parsed.error };
+
+  const s = load();
+  const categories: Category[] = s.categories.map((c) => ({ ...c }));
+  const intentions: Intention[] = s.intentions.map((it) => ({ ...it }));
+  const completions: Completions = {};
+  Object.entries(s.completions).forEach(([iid, m]) => { completions[iid] = { ...m }; });
+
+  const norm = (x: string): string => x.trim().toLowerCase();
+  const catByName = new Map<string, Category>();
+  categories.forEach((c) => catByName.set(norm(c.name), c));
+  const intKey = (catId: string | null, name: string): string => `${catId ?? '_none'}|${norm(name)}`;
+  const intByKey = new Map<string, Intention>();
+  intentions.forEach((it) => intByKey.set(intKey(it.categoryId, it.name), it));
+
+  let categoriesAdded = 0, intentionsAdded = 0, daysAdded = 0;
+  let colorCursor = intentions.length; // round-robin palette for new intentions
+
+  for (const row of parsed.rows) {
+    let catId: string | null = null;
+    if (row.category) {
+      let cat = catByName.get(norm(row.category));
+      if (!cat) {
+        cat = { id: uid('c'), name: row.category };
+        categories.push(cat);
+        catByName.set(norm(row.category), cat);
+        categoriesAdded++;
+      }
+      catId = cat.id;
+    }
+    if (!row.intention) continue;
+    const key = intKey(catId, row.intention);
+    let it = intByKey.get(key);
+    if (!it) {
+      it = {
+        id: uid('i'), name: row.intention, categoryId: catId,
+        color: PALETTE[colorCursor++ % PALETTE.length].id,
+        targetEnabled: false, targetCompletions: 3, targetPeriodDays: 7,
+      };
+      intentions.push(it);
+      intByKey.set(key, it);
+      intentionsAdded++;
+    }
+    if (!completions[it.id]) completions[it.id] = {};
+    if (!completions[it.id][row.date]) { completions[it.id][row.date] = true; daysAdded++; }
+  }
+
+  state = { version: 1, categories, intentions, completions };
+  persistAll();
+  return { ok: true, categoriesAdded, intentionsAdded, daysAdded, rowsSkipped: parsed.skipped };
+}
