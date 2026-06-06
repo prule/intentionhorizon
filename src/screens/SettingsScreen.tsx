@@ -241,6 +241,19 @@ export function SettingsScreen({ bump, openGuide }: { version: number; bump: () 
   const s = IH.load();
   const [intentEditor, setIntentEditor] = React.useState<{ open: boolean; editing: IH.Intention | null }>({ open: false, editing: null });
   const [catEditor, setCatEditor] = React.useState<{ open: boolean; editing: IH.Category | null }>({ open: false, editing: null });
+  const fileInput = React.useRef<HTMLInputElement>(null);
+
+  const onImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // reset so the same file can be re-picked
+    if (!file) return;
+    if (!confirm('Import this CSV into the Real data source? New categories, intentions, and completed days will be merged into your existing data.')) return;
+    const res = IH.importCSV(await file.text());
+    if (!res.ok) { alert(`Import failed: ${res.error}`); return; }
+    bump();
+    const skipped = res.rowsSkipped ? ` ${res.rowsSkipped} row(s) skipped.` : '';
+    alert(`Import complete. Added ${res.categoriesAdded} categor${res.categoriesAdded === 1 ? 'y' : 'ies'}, ${res.intentionsAdded} intention(s), ${res.daysAdded} completed day(s).${skipped}`);
+  };
 
   const intentsByCat: Record<string, IH.Intention[]> = {};
   s.intentions.forEach((it) => { const k = it.categoryId || '_none'; (intentsByCat[k] = intentsByCat[k] || []).push(it); });
@@ -306,11 +319,13 @@ export function SettingsScreen({ bump, openGuide }: { version: number; bump: () 
         <AnalyticsConsent />
         <RowButton label="User guide" onClick={openGuide} icon={<Icon.help />} />
         <RowButton label="Add category" testid="add-category" onClick={() => setCatEditor({ open: true, editing: null })} icon={<Icon.plus style={{ width: 18, height: 18 }} />} />
-        <RowButton label="Export data as CSV" onClick={() => IH.downloadCSV()} icon={<Icon.download />} />
+        <RowButton label="Export data as CSV" testid="export-csv" onClick={() => IH.downloadCSV()} icon={<Icon.download />} />
+        <RowButton label="Import data from CSV" testid="import-csv" onClick={() => fileInput.current?.click()} icon={<Icon.upload />} />
+        <input ref={fileInput} type="file" accept=".csv,text/csv" data-testid="import-csv-input" onChange={onImportFile} style={{ display: 'none' }} />
         {IH.mockEnabled() && IH.getDataSource() === 'mock' ? (
           <RowButton label="Reset to sample data" onClick={() => { if (confirm('Reset mock data to the seeded sample set?')) { IH.resetSeed(); bump(); } }} icon={undefined} danger />
         ) : (
-          <RowButton label="Clear all data" onClick={() => { if (confirm('Clear all data in the Real source? This cannot be undone.')) { IH.resetSeed(); bump(); } }} icon={undefined} danger />
+          <RowButton label="Clear all data" testid="clear-data" onClick={() => { if (confirm('Clear all data in the Real source? This cannot be undone.')) { IH.resetSeed(); bump(); } }} icon={undefined} danger />
         )}
       </div>
 
