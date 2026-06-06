@@ -37,6 +37,10 @@ jobs:
 
       - run: npm run build
 
+      # Fast unit suite runs before e2e so logic failures surface before the
+      # slower browser run; a failing unit test fails the job and gates deploy.
+      - run: npm run test:unit
+
       # Playwright starts its own dev server (CI=true disables reuse), and the
       # e2e seed hook is gated behind import.meta.env.DEV, so tests run against
       # the dev server rather than the production build.
