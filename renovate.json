@@ -1,0 +1,35 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "rangeStrategy": "pin",
+  "timezone": "UTC",
+  "schedule": ["after 10pm on friday", "before 5am on monday"],
+  "packageRules": [
+    {
+      "description": "Automerge minor/patch updates and pinned versions for devDependencies",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch", "pin"],
+      "automerge": true
+    },
+    {
+      "description": "Group Serenity/JS package updates to prevent PR noise",
+      "matchPackagePatterns": ["^@serenity-js/"],
+      "groupName": "Serenity/JS packages"
+    },
+    {
+      "description": "Group WebdriverIO package updates to prevent PR noise",
+      "matchPackagePatterns": ["^@wdio/", "^webdriverio$"],
+      "groupName": "WebdriverIO packages"
+    },
+    {
+      "description": "Group React ecosystem package updates to keep them aligned",
+      "matchPackagePatterns": ["^react", "^@types/react"],
+      "groupName": "React ecosystem"
+    },
+    {
+      "description": "Group testing utility package updates",
+      "matchPackagePatterns": ["^@testing-library/", "^jsdom$", "^fake-indexeddb$"],
+      "groupName": "Testing Library & Test Helpers"
+    }
+  ]
+}
