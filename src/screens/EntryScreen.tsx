@@ -99,7 +99,7 @@ export function EntryScreen({ date, setDate, version, bump, openGuide }: {
           control are visible at every scroll position; opaque background lets
           rows scroll cleanly behind it. */}
       <div data-testid="entry-header" style={{
-        position: 'sticky', top: 0, zIndex: 5,
+        position: 'sticky', top: 0, zIndex: 5, paddingBottom: 8,
         background: isToday ? 'var(--bg)' : 'color-mix(in oklch, var(--c-amber) 22%, var(--bg))',
         borderBottom: `1px solid ${isToday ? 'var(--line-soft)' : 'var(--c-amber)'}`,
         transition: 'background 0.2s ease, border-color 0.2s ease',
