@@ -59,13 +59,9 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  const [date, setDateRaw] = React.useState<Date>(() => {
-    const saved = localStorage.getItem('ih-entry-date');
-    const t = IH.today();
-    if (saved) { const d = IH.parseKey(saved); if (d <= t && d >= IH.addDays(t, -7)) return d; }
-    return t;
-  });
-  const setDate = (d: Date) => { setDateRaw(d); localStorage.setItem('ih-entry-date', IH.dateKey(d)); };
+  // The Journal always opens on today; the viewed day is intentionally not
+  // persisted, so reopening the app never lands the user on a stale past day.
+  const [date, setDate] = React.useState<Date>(IH.today);
 
   const screen =
     tab === 'entry' ? <EntryScreen date={date} setDate={setDate} version={version} bump={bump} openGuide={openGuide} />

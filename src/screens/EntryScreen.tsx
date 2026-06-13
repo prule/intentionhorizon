@@ -86,20 +86,34 @@ export function EntryScreen({ date, setDate, version, bump, openGuide }: {
   const groups = [...cats.map((c) => ({ id: c.id, name: c.name })), ...(intentsByCat['_none'] ? [{ id: '_none', name: 'Uncategorized' }] : [])]
     .filter((g) => (intentsByCat[g.id] || []).length);
 
+  // When the viewed day is not today, tint the pinned header amber so the user
+  // can't miss that completions they toggle land on a past day, not today.
+  const isToday = IH.sameKey(date, IH.today());
+
   return (
     // No `key={version}` here: a changing key would remount the scroll subtree on
     // every data mutation and reset scrollTop. The `version` prop change still
     // re-renders this component (re-running IH.load() above) without losing scroll.
     <div className="ih-scroll fade-up" data-testid="screen-entry" style={{ paddingBottom: 24 }}>
-      <ScreenHeader title="Journal" subtitle={`${doneToday} of ${total} intentions complete`} right={
-        openGuide ? (
-          <button className="ih-btn" onClick={openGuide} aria-label="User guide" style={{
-            width: 40, height: 40, borderRadius: 12, background: 'var(--surface)', border: '1px solid var(--line-soft)',
-            display: 'grid', placeItems: 'center', color: 'var(--ink-3)', boxShadow: 'var(--shadow-card)',
-          }}><Icon.help /></button>
-        ) : null
-      } />
-      <DateNav date={date} setDate={setDate} />
+      {/* Header + date nav stay pinned so the viewed day and the return-to-today
+          control are visible at every scroll position; opaque background lets
+          rows scroll cleanly behind it. */}
+      <div data-testid="entry-header" style={{
+        position: 'sticky', top: 0, zIndex: 5,
+        background: isToday ? 'var(--bg)' : 'color-mix(in oklch, var(--c-amber) 22%, var(--bg))',
+        borderBottom: `1px solid ${isToday ? 'var(--line-soft)' : 'var(--c-amber)'}`,
+        transition: 'background 0.2s ease, border-color 0.2s ease',
+      }}>
+        <ScreenHeader title="Journal" subtitle={`${doneToday} of ${total} intentions complete`} right={
+          openGuide ? (
+            <button className="ih-btn" onClick={openGuide} aria-label="User guide" style={{
+              width: 40, height: 40, borderRadius: 12, background: 'var(--surface)', border: '1px solid var(--line-soft)',
+              display: 'grid', placeItems: 'center', color: 'var(--ink-3)', boxShadow: 'var(--shadow-card)',
+            }}><Icon.help /></button>
+          ) : null
+        } />
+        <DateNav date={date} setDate={setDate} />
+      </div>
 
       {groups.map((g) => (
         <div key={g.id} style={{ marginBottom: 18 }}>

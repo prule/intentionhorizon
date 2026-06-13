@@ -2,7 +2,7 @@ import { describe, it } from '../fixtures';
 import { Wait } from '@serenity-js/core';
 import { Ensure, equals, isFalse, isTrue } from '@serenity-js/assertions';
 import { Navigate, isVisible } from '@serenity-js/web';
-import { NavigateDay } from '../tasks';
+import { NavigateDay, ReloadTheApp } from '../tasks';
 import { VisibleDate, CanNavigate, ReturnToToday, ActiveTab } from '../questions';
 import { byTestId } from '../elements';
 
@@ -35,6 +35,18 @@ describe('Date navigation', () => {
       NavigateDay.toToday(),
       Ensure.that(VisibleDate.label(), equals('Today')),
       Ensure.that(ReturnToToday.isShown(), isFalse()), // hidden again on today
+    );
+  });
+
+  it('reopens on today after navigating to a past day and reloading', async ({ actor }) => {
+    await actor.attemptsTo(
+      NavigateDay.previous(),
+      Ensure.that(VisibleDate.label(), equals('Yesterday')),
+
+      ReloadTheApp.now(),
+
+      // The viewed day is not persisted: a relaunch always lands on today.
+      Ensure.that(VisibleDate.label(), equals('Today')),
     );
   });
 
