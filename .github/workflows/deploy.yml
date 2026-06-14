@@ -25,26 +25,31 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      # pnpm must be on PATH before setup-node so its `cache: pnpm` works.
+      # Version is read from package.json's "packageManager" field.
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
-          cache: npm
+          cache: "pnpm"
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
+
 
       # Only Chromium is configured in playwright.config.ts.
-      - run: npx playwright install --with-deps chromium
+      - run: pnpm exec playwright install --with-deps chromium
 
-      - run: npm run build
+      - run: pnpm build
 
       # Fast unit suite runs before e2e so logic failures surface before the
       # slower browser run; a failing unit test fails the job and gates deploy.
-      - run: npm run test:unit
+      - run: pnpm test:unit
 
       # Playwright starts its own dev server (CI=true disables reuse), and the
       # e2e seed hook is gated behind import.meta.env.DEV, so tests run against
       # the dev server rather than the production build.
-      - run: npm run e2e
+      - run: pnpm e2e
 
   build:
     # Only build/deploy Pages on pushes to main, and only after tests pass.
@@ -54,14 +59,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
-          cache: npm
+          cache: pnpm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
-      - run: npm run build
+      - run: pnpm build
 
       - uses: actions/upload-pages-artifact@v5
         with:
