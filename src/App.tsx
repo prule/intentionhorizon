@@ -7,6 +7,7 @@ import React from 'react';
 import * as IH from './data/store';
 import { TabBar, Sidebar, useMedia } from './components/ui';
 import { ConsentBanner } from './components/ConsentBanner';
+import { UpdateBanner } from './components/UpdateBanner';
 import { EntryScreen } from './screens/EntryScreen';
 import { AnalyticsScreen } from './screens/AnalyticsScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
@@ -81,6 +82,7 @@ export default function App() {
         </main>
         {guide}
         <ConsentBanner />
+        <UpdateBanner />
       </div>
     );
   }
@@ -93,6 +95,7 @@ export default function App() {
       <TabBar tab={tab} setTab={setTab} />
       {guide}
       <ConsentBanner />
+      <UpdateBanner />
     </div>
   );
 }

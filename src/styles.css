@@ -252,6 +252,42 @@ input.ih-input:focus, select.ih-select:focus {
   .consent-banner { bottom: calc(86px + env(safe-area-inset-bottom)); }
 }
 
+/* ── update banner ── (mirrors the consent banner) */
+.update-banner {
+  position: fixed; z-index: 150;
+  left: 12px; right: 12px; margin-inline: auto;
+  max-width: 560px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 13px;
+  animation: popIn 0.26s cubic-bezier(0.32,0.72,0,1) both;
+}
+.update-text { font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+.update-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.update-btn { padding: 9px 18px; border-radius: 11px; font-size: 14px; font-weight: 600; }
+.update-later { background: var(--bg-2); color: var(--ink-2); border: 1px solid var(--line-soft); }
+.update-reload { background: var(--ink); color: #fff; }
+/* On mobile, sit above the bottom tab bar. */
+@media (max-width: 879px) {
+  .update-banner { bottom: calc(86px + env(safe-area-inset-bottom)); }
+}
+/* If the consent banner is also showing (returning, not-yet-consented user
+   across a deploy), stack the update banner above it so they don't overlap.
+   180px reserves the consent banner's height (~164px when its text wraps on a
+   narrow viewport) plus a ~16px gap. */
+.app-shell:has(.consent-banner) .update-banner {
+  bottom: calc(16px + env(safe-area-inset-bottom) + 180px);
+}
+@media (max-width: 879px) {
+  .app-shell:has(.consent-banner) .update-banner {
+    bottom: calc(86px + env(safe-area-inset-bottom) + 180px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }

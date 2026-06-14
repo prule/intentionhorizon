@@ -52,14 +52,8 @@
 </head>
 <body>
   <div id="root"></div>
+  <!-- PWA service worker is registered by vite-plugin-pwa via the in-app
+       UpdateBanner (virtual:pwa-register/react); no manual registration here. -->
   <script type="module" src="/src/main.tsx"></script>
-  <script>
-    // PWA service worker — offline app shell. Fails silently if unsupported.
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('sw.js').catch(function () {});
-      });
-    }
-  </script>
 </body>
 </html>
