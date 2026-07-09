@@ -6,6 +6,7 @@
 
 [Project Brief](project_brief_intention_horizon.md)
 [UI Design](Intention%20Horizon-handoff.zip) -  Claude Design exported as a handoff to Claude Code.
+[Development](DEVELOPMENT.md) - Dev Container setup (VS Code / IntelliJ / WebStorm) and the Claude + OpenSpec workflow.
 
 ## Environment
 
