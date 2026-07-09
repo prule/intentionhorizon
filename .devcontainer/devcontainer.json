@@ -4,7 +4,7 @@
   // Debian bookworm dev container base (non-root `vscode` user with passwordless
   // sudo, git, common CLI tooling). Node and Java are layered on as features so
   // we can pin exact versions — the prebuilt typescript-node image tops out at
-  // Node 22, and this project needs Node 24 (see .nvmrc).
+  // Node 22, and this project needs Node 24 (see .node-version).
   "image": "mcr.microsoft.com/devcontainers/base:bookworm",
 
   "features": {
