@@ -13,9 +13,9 @@ corepack prepare pnpm@11.5.2 --activate
 #   - OpenSpec    : spec-driven change workflow (`openspec new change`, etc.)
 npm install -g @anthropic-ai/claude-code @fission-ai/openspec
 
-# The node_modules named volume is created root-owned; hand it to `vscode`
-# before installing so pnpm can write to it.
-sudo chown "$(id -u):$(id -g)" node_modules
+# Named volumes are created root-owned; hand them to `vscode` so pnpm can
+# install and the CLIs can write their credentials on login.
+sudo chown "$(id -u):$(id -g)" node_modules ~/.claude ~/.config/gh
 
 # Project dependencies, then the Chromium build matching the project's
 # Playwright, plus its OS-level libraries (--with-deps uses sudo).
