@@ -1,7 +1,21 @@
 {
   "name": "Intention Horizon",
 
-  "build": { "dockerfile": "Dockerfile" },
+  // Debian bookworm dev container base (non-root `vscode` user with passwordless
+  // sudo, git, common CLI tooling). Node and Java are layered on as features so
+  // we can pin exact versions — the prebuilt typescript-node image tops out at
+  // Node 22, and this project needs Node 24 (see .nvmrc).
+  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24.15.0"
+    },
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "jdkDistro": "tem"
+    }
+  },
 
   // Static, predictable container name. `docker ps` / `docker exec` /
   // IDE attach all see it as "intention-horizon-dev" on every rebuild.
@@ -21,11 +35,10 @@
     "4173": { "label": "Vite preview", "onAutoForward": "silent" }
   },
 
-  // The node_modules volume is created root-owned; hand it to `node`, then
-  // install deps and fetch the Chromium build matching the project's Playwright.
-  "postCreateCommand": "sudo chown node:node node_modules && pnpm install --frozen-lockfile && pnpm exec playwright install chromium",
+  // First-create setup: pnpm (pinned), workflow CLIs, deps, Chromium. See script.
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
 
-  "remoteUser": "node",
+  "remoteUser": "vscode",
 
   "customizations": {
     "vscode": {

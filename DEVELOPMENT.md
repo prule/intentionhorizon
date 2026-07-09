@@ -15,12 +15,14 @@ spec-driven workflow (Claude Code + OpenSpec) lives.
 
 ## What's in the container
 
-Defined in [`.devcontainer/`](.devcontainer). Base image: Microsoft's
-TypeScript + Node 24 dev container (Debian bookworm).
+Defined in [`.devcontainer/`](.devcontainer). Base image: Microsoft's Debian
+bookworm dev container, with Node and Java layered on as dev container features
+(so the exact versions are pinned) and first-run setup in
+[`post-create.sh`](.devcontainer/post-create.sh).
 
 | Tool | Why it's there |
 | --- | --- |
-| **Node 24** | Matches `.nvmrc` and CI. |
+| **Node 24.15.0** | Pinned to match `.nvmrc` and CI, via the Node feature. |
 | **pnpm 11.5.2** | Pinned to `package.json`'s `packageManager` field via corepack. |
 | **Java (headless JRE)** | `serenity-bdd` generates the BDD report by running a Java jar. |
 | **Playwright + Chromium deps** | e2e tests. OS libs are baked in; the browser binary is installed per-project on first create. |
