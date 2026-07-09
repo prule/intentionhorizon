@@ -14,7 +14,9 @@
     "ghcr.io/devcontainers/features/java:1": {
       "version": "17",
       "jdkDistro": "tem"
-    }
+    },
+    // GitHub CLI — used to authenticate git over HTTPS (`gh auth login`).
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
 
   // Static, predictable container name. `docker ps` / `docker exec` /
@@ -25,8 +27,15 @@
   // Keep node_modules in a named volume rather than the bind-mounted workspace.
   // esbuild, Playwright and other native binaries are platform-specific, so the
   // host's (macOS/Windows) node_modules must not leak into the Linux container.
+  // Named volumes survive container rebuilds, so logins persist:
+  //   - node_modules : keeps host (macOS/Windows) native binaries out of the
+  //     Linux container; esbuild/Playwright etc. are platform-specific.
+  //   - .claude      : Claude Code credentials, so you don't re-login on rebuild.
+  //   - .config/gh   : GitHub CLI credentials, likewise.
   "mounts": [
-    "source=intention-horizon-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+    "source=intention-horizon-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=intention-horizon-claude,target=/home/vscode/.claude,type=volume",
+    "source=intention-horizon-gh,target=/home/vscode/.config/gh,type=volume"
   ],
 
   "forwardPorts": [5173, 4173],
