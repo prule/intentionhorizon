@@ -31,6 +31,7 @@
     "@serenity-js/playwright-test": "^3.43.2",
     "@serenity-js/serenity-bdd": "^3.43.2",
     "@serenity-js/web": "^3.43.2",
+    "@types/node": "^26.1.1",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",

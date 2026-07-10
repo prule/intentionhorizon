@@ -6,6 +6,7 @@ import * as IH from '../data/store';
 import { Icon } from '../components/Icon';
 import { Sheet, PrimaryButton, DragList, ScreenHeader, type DragHandleProps } from '../components/ui';
 import { getStoredConsent, setConsent } from '../consent';
+import { formatVersion } from '../version';
 
 function ColorPicker({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   return (
@@ -328,6 +329,11 @@ export function SettingsScreen({ bump, openGuide }: { version: number; bump: () 
           <RowButton label="Clear all data" testid="clear-data" onClick={() => { if (confirm('Clear all data in the Real source? This cannot be undone.')) { IH.resetSeed(); bump(); } }} icon={undefined} danger />
         )}
       </div>
+
+      <div data-testid="app-version" style={{
+        padding: '18px 14px 0', textAlign: 'center', fontSize: 12,
+        color: 'var(--ink-3)', letterSpacing: '0.01em',
+      }}>{formatVersion(__APP_VERSION__, __GIT_SHA__)}</div>
 
       <IntentionEditor open={intentEditor.open} editing={intentEditor.editing} categories={s.categories}
         onClose={() => setIntentEditor({ open: false, editing: null })} onSaved={bump} />
