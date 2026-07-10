@@ -1,12 +1,50 @@
 /// <reference types="vitest/config" />
+import { execSync } from 'node:child_process';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+
+// App version is derived from git at build time — never stored on a branch.
+// The minor number is the count of commits on main's first-parent history, so
+// each merge counts once. Cloudflare Pages builds main, so the deployed build
+// gets the authoritative number automatically. The short HEAD hash pins the
+// exact build. Any git failure (shallow clone, no git, source tarball) falls
+// back to a `dev` marker rather than breaking the build.
+const MAJOR = 1;
+
+function git(cmd: string): string | null {
+  try {
+    return execSync(`git ${cmd}`, { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim();
+  } catch {
+    return null;
+  }
+}
+
+function computeVersion(): { version: string; sha: string } {
+  const sha = git('rev-parse --short HEAD') ?? '';
+  // Prefer main's history so the deployed number is authoritative regardless of
+  // which branch is checked out; fall back to HEAD (equals main on a Pages build).
+  const minor =
+    git('rev-list --first-parent --count main') ??
+    git('rev-list --first-parent --count HEAD');
+  if (minor == null) return { version: 'dev', sha };
+  return { version: `v${MAJOR}.${minor}`, sha };
+}
+
+const { version: APP_VERSION, sha: GIT_SHA } = computeVersion();
 
 // Static, local-first PWA. Relative base so the built app can be served from
 // any sub-path (matches the manifest's "scope": "./").
 export default defineConfig({
   base: './',
+  // Bake the git-derived version and short hash in as compile-time constants;
+  // the app reads these globals with no runtime git or network access.
+  define: {
+    __APP_VERSION__: JSON.stringify(APP_VERSION),
+    __GIT_SHA__: JSON.stringify(GIT_SHA),
+  },
   plugins: [
     react(),
     // PWA service worker. Workbox generates a content-revisioned worker on
