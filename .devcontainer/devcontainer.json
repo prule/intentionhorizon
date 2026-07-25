@@ -1,46 +1,53 @@
 {
   "name": "Intention Horizon",
 
-  // Debian bookworm dev container base (non-root `vscode` user with passwordless
-  // sudo, git, common CLI tooling). Node and Java are layered on as features so
-  // we can pin exact versions — the prebuilt typescript-node image tops out at
-  // Node 22, and this project needs Node 24 (see .node-version).
-  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  // JS toolchain (fnm + Node, standalone pnpm, OpenSpec CLI) is built from the
+  // Dockerfile — NOT corepack, matching the Strength project's approach.
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
 
+  // Layered on top of the built image as Dev Container Features:
+  //   - java:        Serenity BDD (`serenity-bdd run`) needs a JVM.
+  //   - github-cli:  `gh` for PRs/issues and HTTPS git auth (`gh auth login`).
+  //   - claude-code: the Claude Code CLI.
+  // Node/pnpm come from the Dockerfile, not a feature, so they stay pinned.
   "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "24.18.0"
-    },
     "ghcr.io/devcontainers/features/java:1": {
       "version": "17",
       "jdkDistro": "tem"
     },
-    // GitHub CLI — used to authenticate git over HTTPS (`gh auth login`).
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
   },
 
-  // Static, predictable container name. `docker ps` / `docker exec` /
-  // IDE attach all see it as "intention-horizon-dev" on every rebuild.
-  // Note: only one instance can exist at a time — rebuilding replaces it.
-  "runArgs": ["--name", "intention-horizon-dev"],
+  // Predictable identity: --name pins the Docker container name (shown in
+  // `docker ps`) and --hostname makes the shell prompt read
+  // `vscode@intention-horizon`. Caveat: only ONE orchestrator may own the name
+  // at a time. If a rebuild fails with "container name ... already in use",
+  // remove the stale one and rebuild:  docker rm -f intention-horizon-dev
+  "runArgs": ["--name", "intention-horizon-dev", "--hostname", "intention-horizon"],
 
-  // Keep node_modules in a named volume rather than the bind-mounted workspace.
-  // esbuild, Playwright and other native binaries are platform-specific, so the
-  // host's (macOS/Windows) node_modules must not leak into the Linux container.
-  // Named volumes survive container rebuilds, so logins persist:
+  // Vite dev server + preview (this app lives at the repo ROOT).
+  "forwardPorts": [5173, 4173],
+  "portsAttributes": {
+    "5173": { "label": "Vite dev server", "onAutoForward": "notify" },
+    "4173": { "label": "Vite preview", "onAutoForward": "silent" }
+  },
+
+  // Named volumes keep heavy/machine-specific dirs off the (slow on
+  // macOS/Windows) bind mount and persist across rebuilds:
   //   - node_modules : keeps host (macOS/Windows) native binaries out of the
-  //     Linux container; esbuild/Playwright etc. are platform-specific.
-  //   - .claude      : Claude Code credentials, so you don't re-login on rebuild.
+  //     Linux container; esbuild/Playwright etc. are platform-specific. App is
+  //     at the repo root, so the target is ${containerWorkspaceFolder}.
+  //   - .claude      : Claude Code credentials — no re-login on rebuild.
   //   - .config/gh   : GitHub CLI credentials, likewise.
   //   - /cache       : the pnpm store, shared with EVERY dev container on this
-  //     machine, so a package version is downloaded once per machine rather than
-  //     once per project. The source name is deliberately project-independent —
-  //     renaming it per project silently un-shares the store. post-create points
-  //     pnpm at /cache/pnpm-store; pnpm ignores env vars for that setting, so it
-  //     cannot be configured here.
-  //   - ms-playwright: the browsers, so a rebuild doesn't re-download ~539MB.
-  //     Per project on purpose — a shared browser cache lets one project's
-  //     `playwright install` garbage-collect another project's browsers.
+  //     machine, so a package version downloads once per machine. The source
+  //     name is deliberately project-independent — renaming it per project
+  //     silently un-shares the store. post-create points pnpm at
+  //     /cache/pnpm-store; pnpm ignores env vars for that setting.
+  //   - ms-playwright: the browsers, so a rebuild doesn't re-download Chromium.
   "mounts": [
     "source=intention-horizon-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=intention-horizon-claude,target=/home/vscode/.claude,type=volume",
@@ -49,36 +56,42 @@
     "source=intention-horizon-playwright,target=/home/vscode/.cache/ms-playwright,type=volume"
   ],
 
-  // Pin Playwright to the volume above rather than relying on its ~/.cache
-  // default. containerEnv, not remoteEnv: remoteEnv only reaches processes the
-  // dev container tooling launches, and a Playwright that cannot see this var
-  // doesn't fail — it silently downloads its own copy, bypassing the volume.
+  // Pin Playwright to the volume above rather than its ~/.cache default
+  // (containerEnv, not remoteEnv: a Playwright that can't see this var silently
+  // downloads its own copy, bypassing the volume). Opt out of OpenSpec's
+  // anonymous telemetry (privacy-preserving default; also silences its notice).
   "containerEnv": {
-    "PLAYWRIGHT_BROWSERS_PATH": "/home/vscode/.cache/ms-playwright"
+    "PLAYWRIGHT_BROWSERS_PATH": "/home/vscode/.cache/ms-playwright",
+    "OPENSPEC_TELEMETRY": "0"
   },
 
-  "forwardPorts": [5173, 4173],
-  "portsAttributes": {
-    "5173": { "label": "Vite dev server", "onAutoForward": "notify" },
-    "4173": { "label": "Vite preview", "onAutoForward": "silent" }
-  },
-
-  // First-create setup: pnpm (pinned), workflow CLIs, deps, Chromium. See script.
+  // One-time provisioning: chown the volumes, sync Node to .node-version, point
+  // pnpm at the shared store, install deps, and fetch the Playwright Chromium.
   "postCreateCommand": "bash .devcontainer/post-create.sh",
 
   "remoteUser": "vscode",
 
+  // Editor-specific setup. VS Code reads `vscode`; JetBrains Gateway / WebStorm
+  // reads `jetbrains` (and ignores the other). Both open the SAME container.
   "customizations": {
     "vscode": {
       "extensions": [
-        "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "ms-playwright.playwright",
-        "anthropic.claude-code"
+        "ms-playwright.playwright"
       ],
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "terminal.integrated.defaultProfile.linux": "zsh"
       }
+    },
+    "jetbrains": {
+      // WebStorm is the natural fit for this React/TS/Vite frontend. Switch to
+      // "IntelliJ" to use IntelliJ IDEA Ultimate instead.
+      "backend": "WebStorm",
+      "plugins": [
+        "intellij.prettierJS"
+      ]
     }
   }
 }
