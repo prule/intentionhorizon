@@ -4,7 +4,7 @@
 import React from 'react';
 import * as IH from '../data/store';
 import { Icon } from '../components/Icon';
-import { CircleToggle, Stat, MiniHistory, ScreenHeader } from '../components/ui';
+import { CircleToggle, Stat, MiniHistory, ScreenHeader, Sheet } from '../components/ui';
 
 const navBtn = (enabled: boolean): React.CSSProperties => ({
   width: 40, height: 40, borderRadius: 12, display: 'grid', placeItems: 'center',
@@ -13,23 +13,50 @@ const navBtn = (enabled: boolean): React.CSSProperties => ({
   boxShadow: enabled ? 'var(--shadow-card)' : 'none',
 });
 
+function MonthPickerDialog({ open, onClose, onPick }: {
+  open: boolean; onClose: () => void; onPick: (p: IH.MonthPeriod) => void;
+}) {
+  const periods = IH.monthsWithData();
+  return (
+    <Sheet open={open} onClose={onClose} title="Jump to month">
+      {periods.map((p) => (
+        <button key={`${p.year}-${p.month}`} className="ih-btn" data-testid="month-picker-option"
+          data-period-label={`${IH.MONTHS[p.month]} ${p.year}`}
+          onClick={() => onPick(p)} style={{
+            width: '100%', textAlign: 'left', padding: '12px 14px', borderRadius: 12,
+            fontSize: 15, fontWeight: 600, letterSpacing: '-0.01em', color: 'var(--ink-2)',
+            marginBottom: 6,
+          }}>
+          {IH.MONTHS[p.month]} {p.year}
+        </button>
+      ))}
+    </Sheet>
+  );
+}
+
 function DateNav({ date, setDate }: { date: Date; setDate: (d: Date) => void }) {
+  const [pickerOpen, setPickerOpen] = React.useState(false);
   const t = IH.today();
-  const minDate = IH.addDays(t, -7); // toggling allowed up to 7 days prior
-  const canPrev = date > minDate;
+  const minDate = IH.earliestCompletionDate();
+  const canPrev = minDate != null && date > minDate;
   const canNext = date < t;
   const isToday = IH.sameKey(date, t); // hide the return-to-today control on today
+  const hasHistory = IH.monthsWithData().length > 0;
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 20px 14px' }}>
       <button className="ih-btn" data-testid="date-prev" disabled={!canPrev} onClick={() => canPrev && setDate(IH.addDays(date, -1))}
         style={navBtn(canPrev)}><Icon.chevL /></button>
       <div style={{ flex: 1, textAlign: 'center' }}>
-        <div data-testid="date-label" style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.01em' }}>{IH.fmtDay(date)}</div>
+        <div data-testid="date-label" data-date-key={IH.dateKey(date)} style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.01em' }}>{IH.fmtDay(date)}</div>
         <div className="num" style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
           {IH.WD[date.getDay()]}, {IH.MONTHS[date.getMonth()]} {date.getDate()}
         </div>
       </div>
+      {hasHistory && (
+        <button className="ih-btn" data-testid="date-jump" aria-label="Jump to month" onClick={() => setPickerOpen(true)}
+          style={navBtn(true)}><Icon.calendar /></button>
+      )}
       {!isToday && (
         <button className="ih-btn" data-testid="date-today" aria-label="Return to today" onClick={() => setDate(t)}
           style={{
@@ -39,6 +66,11 @@ function DateNav({ date, setDate }: { date: Date; setDate: (d: Date) => void }) 
       )}
       <button className="ih-btn" data-testid="date-next" disabled={!canNext} onClick={() => canNext && setDate(IH.addDays(date, 1))}
         style={navBtn(canNext)}><Icon.chevR /></button>
+      <MonthPickerDialog open={pickerOpen} onClose={() => setPickerOpen(false)} onPick={(p) => {
+        const d = IH.latestCompletionInMonth(p.year, p.month);
+        if (d) setDate(d);
+        setPickerOpen(false);
+      }} />
     </div>
   );
 }

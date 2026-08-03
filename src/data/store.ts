@@ -458,6 +458,42 @@ export function doneOnDay(key: string): Intention[] {
   return s.intentions.filter((it) => s.completions[it.id] && s.completions[it.id][key]);
 }
 
+// distinct dateKeys (across all intentions) that have at least one completion
+function completedDateKeys(): string[] {
+  const s = load();
+  const keys = new Set<string>();
+  Object.values(s.completions).forEach((m) => Object.keys(m).forEach((k) => { if (m[k]) keys.add(k); }));
+  return [...keys];
+}
+
+export type MonthPeriod = { year: number; month: number }; // month is 0-based (Date#getMonth())
+
+// distinct year/month periods that have at least one recorded completion, most recent first
+export function monthsWithData(): MonthPeriod[] {
+  const periods = new Map<string, MonthPeriod>();
+  completedDateKeys().forEach((k) => {
+    const [y, m] = k.split('-').map(Number);
+    const pk = `${y}-${m}`;
+    if (!periods.has(pk)) periods.set(pk, { year: y, month: m - 1 });
+  });
+  return [...periods.values()].sort((a, b) => (b.year - a.year) || (b.month - a.month));
+}
+
+// earliest date with a recorded completion, or null if there is no data at all
+export function earliestCompletionDate(): Date | null {
+  const keys = completedDateKeys();
+  if (keys.length === 0) return null;
+  return keys.map(parseKey).reduce((min, d) => (d < min ? d : min));
+}
+
+// most recent day within the given year/month (0-based) that has a recorded completion, or null
+export function latestCompletionInMonth(year: number, month: number): Date | null {
+  const prefix = `${year}-${pad(month + 1)}-`;
+  const keys = completedDateKeys().filter((k) => k.startsWith(prefix));
+  if (keys.length === 0) return null;
+  return keys.map(parseKey).reduce((max, d) => (d > max ? d : max));
+}
+
 export type DayMetric = { count: number; met: number; metRatio: number; targetedTotal: number };
 // For analytics heatmap: for a date, among the relevant (target-enabled) intentions,
 // how many met their target as-of that date — each evaluated over its own
