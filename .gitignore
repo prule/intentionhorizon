@@ -15073,3 +15073,6 @@ target
 /.pnpm-store/v11/files/ff/faf60c364583babec302f28a70669c3c45f76868b6e4a310d74192b137cfdac725c7441ad2dc5245801f4acee4c939d4cb3cb71dae0427e71235c39b3859e7
 /.pnpm-store/v11/files/ff/fef817968f63b15f2a1f14de95b78a45a251bcc910217983f4208aaf06904f8e5489473518e14e62137ee63252b5aa5da1db9a942ca611934a994dfb5068fe
 /.pnpm-store/v11/index.db
+
+# Screenshot fixture data (regenerated with current dates via pnpm run gen:screenshot-data)
+images/screenshot-data.csv

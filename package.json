@@ -15,7 +15,8 @@
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug",
     "e2e:report": "playwright test; serenity-bdd run --destination target/site/serenity",
-    "serenity-bdd:update": "serenity-bdd update"
+    "serenity-bdd:update": "serenity-bdd update",
+    "gen:screenshot-data": "node scripts/generate-screenshot-data.mjs"
   },
   "dependencies": {
     "dexie": "^4.0.10",

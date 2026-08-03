@@ -20,6 +20,17 @@ Enable mock data locally by adding to `.env.local`:
 VITE_ENABLE_MOCK_DATA=true
 ```
 
+## Regenerating the screenshot data
+
+`images/intentionhorizon.webp` shows a specific, known-good dataset. To
+reproduce that look — e.g. for a fresh screenshot — with dates anchored to
+today instead of the stale date baked into the image, run
+`pnpm run gen:screenshot-data` and import the result. See
+[`scripts/README.md`](scripts/README.md) for the full workflow.
+
+Re-run step 2 (and re-import) any time you want the data refreshed to the
+current date.
+
 ---
 
 
