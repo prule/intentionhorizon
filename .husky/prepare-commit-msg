@@ -1,0 +1,31 @@
+msg_file="$1"
+source="$2"
+
+case "$source" in
+  merge|squash) exit 0 ;;
+esac
+
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+eval "$("$repo_root/scripts/detect-tool-versions.sh")"
+
+blank_ensured=0
+ensure_blank_line() {
+  [ "$blank_ensured" = 1 ] && return 0
+  last_line=$(tail -n 1 "$msg_file")
+  [ -n "$last_line" ] && printf '\n' >> "$msg_file"
+  blank_ensured=1
+}
+
+append_trailer() {
+  key="$1"
+  value="$2"
+  [ -n "$value" ] || return 0
+  grep -q "^${key}:" "$msg_file" 2>/dev/null && return 0
+  ensure_blank_line
+  printf '%s: %s\n' "$key" "$value" >> "$msg_file"
+}
+
+append_trailer 'Claude-Code-Version' "$CLAUDE_CODE_VERSION"
+append_trailer 'OpenSpec-Version' "$OPENSPEC_VERSION"
+
+exit 0

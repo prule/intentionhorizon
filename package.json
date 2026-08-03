@@ -16,7 +16,10 @@
     "e2e:debug": "playwright test --debug",
     "e2e:report": "playwright test; serenity-bdd run --destination target/site/serenity",
     "serenity-bdd:update": "serenity-bdd update",
-    "gen:screenshot-data": "node scripts/generate-screenshot-data.mjs"
+    "gen:screenshot-data": "node scripts/generate-screenshot-data.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
   },
   "dependencies": {
     "dexie": "^4.0.10",
@@ -37,7 +40,10 @@
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "fake-indexeddb": "^6.2.5",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
+    "lint-staged": "^17.3.0",
+    "prettier": "^3.9.6",
     "typescript": "^5.7.3",
     "vite": "^6.0.7",
     "vite-plugin-pwa": "^1.3.0",
@@ -49,5 +55,8 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ]
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,css,md}": "prettier --write"
   }
 }

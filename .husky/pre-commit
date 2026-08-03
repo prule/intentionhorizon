@@ -1,0 +1,17 @@
+repo_root=$(git rev-parse --show-toplevel)
+eval "$("$repo_root/scripts/detect-tool-versions.sh")"
+
+mkdir -p "$repo_root/versions"
+
+stamp_version() {
+  file="$1"
+  value="$2"
+  [ -n "$value" ] || return 0
+  printf '%s\n' "$value" > "$file"
+  git add "$file"
+}
+
+stamp_version "$repo_root/versions/claude-code" "$CLAUDE_CODE_VERSION"
+stamp_version "$repo_root/versions/openspec" "$OPENSPEC_VERSION"
+
+pnpm exec lint-staged
