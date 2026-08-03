@@ -1,20 +1,41 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+# Project context
+context: |
+  Intention Horizon — a local-first habit-tracking PWA. Define intentions, group
+  them by category, tick them off daily, track against a flexible target
+  (N completions over M days). No backend: all state lives in IndexedDB (Dexie),
+  hydrated into an in-memory cache at boot (src/data/store.ts) and synced back
+  via a serialized write queue.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Tech stack: React 18 + TypeScript (strict), Vite 6, Dexie/IndexedDB, no
+  external state-management library — src/data/store.ts is the single model
+  and persistence layer. PWA via vite-plugin-pwa. Package manager: pnpm.
+
+  Testing: Vitest (jsdom + fake-indexeddb) for unit tests under
+  src/**/*.test.{ts,tsx}. E2E via Playwright + Serenity/JS using the Screenplay
+  pattern (Actors/Tasks/Questions), with a deterministic seed injected onto
+  window.__IH_E2E_SEED__ before boot — see e2e/SCREENPLAY.md and e2e/README.md.
+  E2E has strict layering that must never be broken: Locators (e2e/elements.ts,
+  data-testid only) -> Tasks (e2e/tasks.ts, act only, end on Wait.until, never
+  a fixed sleep) -> Questions (e2e/questions.ts, read only, native return
+  values) -> Specs (e2e/specs/*.spec.ts, compose Tasks+Questions only).
+
+  Conventions: comments explain why, not what. Formatting is enforced by a
+  pre-commit hook (Prettier via lint-staged) — never hand-format. Commit
+  messages auto-carry Claude-Code-Version/OpenSpec-Version trailers; PR
+  descriptions should record the Claude Code and OpenSpec versions used.
+  App version is derived from git history at build time (src/version.ts),
+  never hand-bumped.
+
+# Per-artifact rules
+rules:
+  proposal:
+    - Identify which screen(s) (EntryScreen/AnalyticsScreen/SettingsScreen) and which src/data/store.ts APIs are affected
+    - Note whether the change touches the mock/real data-source split, migrateIntention() legacy shims, or the E2E seeding branch
+  design:
+    - Any new persisted field on an intention/completion must specify how migrateIntention() upgrades legacy rows read from storage
+    - Call out impacts on the hydrate-then-sync-cache pattern (in-memory AppState vs. IndexedDB) if the change touches store.ts
+  tasks:
+    - Split e2e work using the Locator -> Task/Question -> Spec layering order, never combining a locator addition with spec assertions in one task
+    - Include a task to update the relevant capability spec under openspec/specs/ if behavior changes
