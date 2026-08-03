@@ -18,14 +18,17 @@ export default defineConfig<SerenityFixtures, SerenityWorkerFixtures>({
   reporter: [
     // Serenity/JS reporter: enables stage crew in the reporter process so the
     // screenplay narrative is rendered and failure screenshots are archived.
-    ['@serenity-js/playwright-test', {
-      crew: [
-        '@serenity-js/console-reporter',
-        // Emits per-scenario Serenity BDD JSON; render to HTML with `npm run e2e:report`.
-        '@serenity-js/serenity-bdd',
-        ['@serenity-js/core:ArtifactArchiver', { outputDirectory: 'target/site/serenity' }],
-      ],
-    }],
+    [
+      '@serenity-js/playwright-test',
+      {
+        crew: [
+          '@serenity-js/console-reporter',
+          // Emits per-scenario Serenity BDD JSON; render to HTML with `npm run e2e:report`.
+          '@serenity-js/serenity-bdd',
+          ['@serenity-js/core:ArtifactArchiver', { outputDirectory: 'target/site/serenity' }],
+        ],
+      },
+    ],
     ...(process.env.CI
       ? [['github'] as const, ['html', { open: 'never' }] as const]
       : [['list'] as const]),
@@ -38,14 +41,16 @@ export default defineConfig<SerenityFixtures, SerenityWorkerFixtures>({
     // Photographer (worker-process crew). Failures-only by default; set
     // PHOTOS=all to capture a screenshot of every interaction (heavier report).
     crew: [
-      ['@serenity-js/web:Photographer', {
-        strategy: process.env.PHOTOS === 'all' ? 'TakePhotosOfInteractions' : 'TakePhotosOfFailures',
-      }],
+      [
+        '@serenity-js/web:Photographer',
+        {
+          strategy:
+            process.env.PHOTOS === 'all' ? 'TakePhotosOfInteractions' : 'TakePhotosOfFailures',
+        },
+      ],
     ],
   },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  ],
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     command: 'npm run dev',
     url: baseURL,

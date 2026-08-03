@@ -36,17 +36,17 @@ the randomized mock seed.
    in a `real` data source, create these 9 intentions via the Manage screen
    with matching names, categories, colors, and targets:
 
-   | Category | Intention | Target |
-   | --- | --- | --- |
-   | Movement | Workout | 4 / 7 days |
-   | Movement | Walk 8k steps | 6 / 7 days |
-   | Movement | Stretch | none |
-   | Mind | Meditate | 5 / 7 days |
-   | Mind | Read 20 min | 4 / 7 days |
-   | Mind | No phone in bed | none |
-   | Finance | Invest | 1 / 7 days |
-   | Finance | No-spend day | 3 / 7 days |
-   | Connection | Call someone | none |
+   | Category   | Intention       | Target     |
+   | ---------- | --------------- | ---------- |
+   | Movement   | Workout         | 4 / 7 days |
+   | Movement   | Walk 8k steps   | 6 / 7 days |
+   | Movement   | Stretch         | none       |
+   | Mind       | Meditate        | 5 / 7 days |
+   | Mind       | Read 20 min     | 4 / 7 days |
+   | Mind       | No phone in bed | none       |
+   | Finance    | Invest          | 1 / 7 days |
+   | Finance    | No-spend day    | 3 / 7 days |
+   | Connection | Call someone    | none       |
 
 2. **Generate the CSV:**
 

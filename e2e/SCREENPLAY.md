@@ -17,13 +17,13 @@ each live in exactly one place and compose.
 
 ## The five roles
 
-| Role | What it is | Lives in |
-|------|-----------|----------|
-| **Actor** | The user. Named **Tess**. Performs Tasks, answers Questions. | injected as the `actor` fixture |
-| **Ability** | What the actor *can* do. Here: `BrowseTheWebWithPlaywright`. | wired in `fixtures.ts` |
-| **Task** | A user-meaningful action, built from lower-level interactions. | `tasks.ts` |
-| **Question** | Reads observable state off the page, returns a value to assert on. | `questions.ts` |
-| **Locator** | A `data-testid`-based handle on a DOM element. | `elements.ts` |
+| Role         | What it is                                                         | Lives in                        |
+| ------------ | ------------------------------------------------------------------ | ------------------------------- |
+| **Actor**    | The user. Named **Tess**. Performs Tasks, answers Questions.       | injected as the `actor` fixture |
+| **Ability**  | What the actor _can_ do. Here: `BrowseTheWebWithPlaywright`.       | wired in `fixtures.ts`          |
+| **Task**     | A user-meaningful action, built from lower-level interactions.     | `tasks.ts`                      |
+| **Question** | Reads observable state off the page, returns a value to assert on. | `questions.ts`                  |
+| **Locator**  | A `data-testid`-based handle on a DOM element.                     | `elements.ts`                   |
 
 A spec wires them together: the actor `attemptsTo(...)` a sequence of Tasks and
 `Ensure.that(Question, expectation)` assertions.
@@ -52,9 +52,9 @@ spec ── actor.attemptsTo ──▶ Task ──▶ Click / Enter / Wait (Sere
 
 - **Locators** (`elements.ts`) never appear in a spec. Tasks and Questions
   import them; specs import Tasks and Questions. Selectors change in one file.
-- **Tasks** never assert. They *do* — click, type, wait for the form to close.
+- **Tasks** never assert. They _do_ — click, type, wait for the form to close.
   A Task ends when the action has settled.
-- **Questions** never act. They *read* — return a string, number, boolean, or
+- **Questions** never act. They _read_ — return a string, number, boolean, or
   list. Assertion lives in the spec via `Ensure.that` / `Wait.until`.
 
 ## Anatomy of a Task
@@ -62,7 +62,8 @@ spec ── actor.attemptsTo ──▶ Task ──▶ Click / Enter / Wait (Sere
 ```ts
 export const LogIntention = {
   named: (name: string): Task =>
-    Task.where(`#actor logs "${name}"`,
+    Task.where(
+      `#actor logs "${name}"`,
       Click.on(byTestId('intention-toggle').of(intentionRow(name))),
     ),
 };
@@ -72,7 +73,7 @@ export const LogIntention = {
   console/BDD reporter prints. `#actor` is replaced with the actor's name.
 - Activities are Serenity/JS interactions (`Click`, `Enter`, `Navigate`,
   `Wait`) or nested Tasks. They run in order.
-- `.of(...)` scopes a locator to a parent — `intention-toggle` *of* the
+- `.of(...)` scopes a locator to a parent — `intention-toggle` _of_ the
   `intentionRow(name)`, so the right row's toggle is clicked.
 - **End on a settle, not a guess.** Form Tasks finish with
   `Wait.until(nameField, not(isVisible()))` so the next step never races the
@@ -107,8 +108,8 @@ export const CompletionState = {
   for values that settle asynchronously (analytics recompute, animations).
 
 ```ts
-Ensure.that(CompletionState.of('Read'), isTrue());           // immediate
-Wait.until(StreakValue.of('current'), equals(3));            // settles async
+Ensure.that(CompletionState.of('Read'), isTrue()); // immediate
+Wait.until(StreakValue.of('current'), equals(3)); // settles async
 ```
 
 ## Worked example: the Date navigation spec
@@ -139,12 +140,12 @@ Step by step:
    renders. App opens on today, so it reads "Today".
 2. **`CanNavigate.next()` is false** — this Question reads `date-next`'s
    `isEnabled()`. You can't log the future, so the next-day button is disabled
-   on today. This asserts the *upper bound*.
+   on today. This asserts the _upper bound_.
 3. **`NavigateDay.previous()`** — the Task clicks `date-prev`. No wait: the label
    updates synchronously, so the next `Ensure` reads the settled state.
 4. **label equals `'Yesterday'`** — same Question, one day back. The app renders
    relative labels ("Today"/"Yesterday") rather than dates, which is why the
-   Question returns the *label* not a parsed date.
+   Question returns the _label_ not a parsed date.
 5. **`NavigateDay.next()` → `'Today'`** — step forward, back where we started.
    Confirms navigation is reversible.
 
@@ -159,7 +160,7 @@ await actor.attemptsTo(Ensure.that(CanNavigate.previous(), isFalse()));
   around `attemptsTo` is fine when a step repeats with no per-iteration assert.
 - After 7 steps back, **`CanNavigate.previous()` is false** — `date-prev` is now
   disabled. The app only lets you log within a trailing 7-day window, so this
-  asserts the *lower bound*.
+  asserts the _lower bound_.
 
 ### What it shows
 
@@ -178,7 +179,7 @@ await actor.attemptsTo(Ensure.that(CanNavigate.previous(), isFalse()));
 
 Each test gets a fresh browser context. `fixtures.ts` overrides the `page`
 fixture to inject a seed onto `window.__IH_E2E_SEED__` via `addInitScript`
-*before the app boots*; `store.initStore()` reads it. The hook is gated behind
+_before the app boots_; `store.initStore()` reads it. The hook is gated behind
 `import.meta.env.DEV`, so production builds never see it — which is why e2e runs
 against the dev server.
 

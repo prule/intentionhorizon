@@ -1,13 +1,32 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
-  initStore, load, resetSeed,
-  addCategory, updateCategory, deleteCategory,
-  addIntention, updateIntention, deleteIntention,
-  toggleCompletion, isDone, reorderIntentions, reorderCategories,
-  doneOnDay, dayMet, dayMetric, aggregate, streaks, fmtDay,
-  getDataSource, setDataSource,
-  monthsWithData, earliestCompletionDate, latestCompletionInMonth,
-  dateKey, addDays, today,
+  initStore,
+  load,
+  resetSeed,
+  addCategory,
+  updateCategory,
+  deleteCategory,
+  addIntention,
+  updateIntention,
+  deleteIntention,
+  toggleCompletion,
+  isDone,
+  reorderIntentions,
+  reorderCategories,
+  doneOnDay,
+  dayMet,
+  dayMetric,
+  aggregate,
+  streaks,
+  fmtDay,
+  getDataSource,
+  setDataSource,
+  monthsWithData,
+  earliestCompletionDate,
+  latestCompletionInMonth,
+  dateKey,
+  addDays,
+  today,
   type IntentionInput,
 } from './store';
 
@@ -19,8 +38,13 @@ beforeEach(async () => {
 });
 
 const input = (over: Partial<IntentionInput> = {}): IntentionInput => ({
-  name: 'Read', categoryId: null, color: 'blue',
-  targetEnabled: false, targetCompletions: 3, targetPeriodDays: 7, ...over,
+  name: 'Read',
+  categoryId: null,
+  color: 'blue',
+  targetEnabled: false,
+  targetCompletions: 3,
+  targetPeriodDays: 7,
+  ...over,
 });
 const byName = (name: string) => load().intentions.find((it) => it.name === name)!;
 const catId = (name: string) => load().categories.find((c) => c.name === name)!.id;
@@ -48,7 +72,13 @@ describe('intention mutations', () => {
   it('adds with defaulted fields', () => {
     addIntention({ name: 'Walk' } as IntentionInput);
     const walk = byName('Walk');
-    expect(walk).toMatchObject({ categoryId: null, color: 'clay', targetEnabled: false, targetCompletions: 3, targetPeriodDays: 7 });
+    expect(walk).toMatchObject({
+      categoryId: null,
+      color: 'clay',
+      targetEnabled: false,
+      targetCompletions: 3,
+      targetPeriodDays: 7,
+    });
     expect(walk.id).toBeTruthy();
   });
 
@@ -104,9 +134,12 @@ describe('analytics', () => {
   // Build a known dataset anchored to today: "Read" target-enabled (3 in 7),
   // done on offsets 0,1,2; "Walk" no target, done on offsets 0 and 10.
   const seed = () => {
-    addIntention(input({ name: 'Read', targetEnabled: true, targetCompletions: 3, targetPeriodDays: 7 }));
+    addIntention(
+      input({ name: 'Read', targetEnabled: true, targetCompletions: 3, targetPeriodDays: 7 }),
+    );
     addIntention(input({ name: 'Walk', color: 'moss' }));
-    const read = byName('Read').id, walk = byName('Walk').id;
+    const read = byName('Read').id,
+      walk = byName('Walk').id;
     [0, 1, 2].forEach((o) => toggleCompletion(read, dateKey(addDays(today(), -o))));
     [0, 10].forEach((o) => toggleCompletion(walk, dateKey(addDays(today(), -o))));
     return { read, walk };
@@ -114,7 +147,9 @@ describe('analytics', () => {
 
   it('doneOnDay returns the intentions completed that day', () => {
     seed();
-    const names = doneOnDay(dateKey(today())).map((it) => it.name).sort();
+    const names = doneOnDay(dateKey(today()))
+      .map((it) => it.name)
+      .sort();
     expect(names).toEqual(['Read', 'Walk']);
     expect(doneOnDay(dateKey(addDays(today(), -1))).map((it) => it.name)).toEqual(['Read']);
   });
@@ -129,9 +164,9 @@ describe('analytics', () => {
   it('dayMetric reports count and target-met ratio', () => {
     seed();
     const m = dayMetric(today(), null);
-    expect(m.count).toBe(2);          // Read + Walk done today
-    expect(m.targetedTotal).toBe(1);  // only Read is target-enabled
-    expect(m.met).toBe(1);            // Read hit 3-in-7 as of today
+    expect(m.count).toBe(2); // Read + Walk done today
+    expect(m.targetedTotal).toBe(1); // only Read is target-enabled
+    expect(m.met).toBe(1); // Read hit 3-in-7 as of today
     expect(m.metRatio).toBe(1);
   });
 
@@ -187,10 +222,10 @@ describe('month/date availability', () => {
   it('sorts distinct months across years most-recent-first and picks the true earliest/latest', () => {
     addIntention(input({ name: 'Read' }));
     const id = byName('Read').id;
-    const early = new Date(2024, 11, 1);   // Dec 1, 2024
-    const mid = new Date(2025, 5, 10);     // Jun 10, 2025
+    const early = new Date(2024, 11, 1); // Dec 1, 2024
+    const mid = new Date(2025, 5, 10); // Jun 10, 2025
     const midLater = new Date(2025, 5, 20); // Jun 20, 2025 — same month as `mid`
-    const late = new Date(2026, 0, 3);     // Jan 3, 2026
+    const late = new Date(2026, 0, 3); // Jan 3, 2026
     [early, mid, midLater, late].forEach((d) => toggleCompletion(id, dateKey(d)));
 
     expect(monthsWithData()).toEqual([

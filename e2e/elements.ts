@@ -14,8 +14,9 @@ export const byTestId = (id: string) =>
 
 /** A single intention row on the Journal screen, keyed by intention name. */
 export const intentionRow = (name: string) =>
-  PageElement.located(By.css(`[data-testid="intention-row"][data-intention-name="${name}"]`))
-    .describedAs(`the "${name}" intention row`);
+  PageElement.located(
+    By.css(`[data-testid="intention-row"][data-intention-name="${name}"]`),
+  ).describedAs(`the "${name}" intention row`);
 
 /** All intention rows on the Journal screen. */
 export const intentionRows = () =>
@@ -23,33 +24,42 @@ export const intentionRows = () =>
 
 /** An intention's editable row on the Manage screen, keyed by name. */
 export const settingsRow = (name: string) =>
-  PageElement.located(By.css(`[data-testid="settings-intention"][data-intention-name="${name}"]`))
-    .describedAs(`the "${name}" settings row`);
+  PageElement.located(
+    By.css(`[data-testid="settings-intention"][data-intention-name="${name}"]`),
+  ).describedAs(`the "${name}" settings row`);
 
 /** The edit affordance for a category on the Manage screen, keyed by name. */
 export const categoryEditButton = (name: string) =>
-  PageElement.located(By.css(`[data-testid="category-edit"][data-category-name="${name}"]`))
-    .describedAs(`the edit button for category "${name}"`);
+  PageElement.located(
+    By.css(`[data-testid="category-edit"][data-category-name="${name}"]`),
+  ).describedAs(`the edit button for category "${name}"`);
 
 /** All category sections on the Manage screen. */
 export const categorySections = () =>
-  PageElements.located(By.css('[data-testid="category-section"]')).describedAs('the category sections');
+  PageElements.located(By.css('[data-testid="category-section"]')).describedAs(
+    'the category sections',
+  );
 
 /** An Insights filter chip, keyed by its label ("All" or an intention name). */
 export const filterChip = (label: string) =>
-  PageElement.located(By.css(`[data-testid="filter-chip"][data-filter-name="${label}"]`))
-    .describedAs(`the "${label}" filter chip`);
+  PageElement.located(
+    By.css(`[data-testid="filter-chip"][data-filter-name="${label}"]`),
+  ).describedAs(`the "${label}" filter chip`);
 
 /** The target badge(s) shown for an intention on Manage, keyed by name. */
 export const targetBadge = (name: string) =>
-  PageElements.located(By.css(`[data-testid="target-badge"][data-intention-name="${name}"]`))
-    .describedAs(`the target badge for "${name}"`);
+  PageElements.located(
+    By.css(`[data-testid="target-badge"][data-intention-name="${name}"]`),
+  ).describedAs(`the target badge for "${name}"`);
 
 /** All entries in the Journal's jump-to-month picker dialog. */
 export const monthPickerOptions = () =>
-  PageElements.located(By.css('[data-testid="month-picker-option"]')).describedAs('the month picker options');
+  PageElements.located(By.css('[data-testid="month-picker-option"]')).describedAs(
+    'the month picker options',
+  );
 
 /** A single entry in the jump-to-month picker, keyed by its "MMM YYYY" label. */
 export const monthPickerOption = (label: string) =>
-  PageElement.located(By.css(`[data-testid="month-picker-option"][data-period-label="${label}"]`))
-    .describedAs(`the "${label}" month picker option`);
+  PageElement.located(
+    By.css(`[data-testid="month-picker-option"][data-period-label="${label}"]`),
+  ).describedAs(`the "${label}" month picker option`);

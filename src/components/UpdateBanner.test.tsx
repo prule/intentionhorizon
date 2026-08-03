@@ -15,7 +15,9 @@ let container: HTMLDivElement;
 let root: Root;
 
 function render() {
-  act(() => { root.render(<UpdateBanner />); });
+  act(() => {
+    root.render(<UpdateBanner />);
+  });
 }
 
 beforeEach(() => {
@@ -32,13 +34,19 @@ afterEach(() => {
 
 describe('UpdateBanner', () => {
   it('renders nothing when no update is waiting', () => {
-    useRegisterSWMock.mockReturnValue({ needRefresh: [false, vi.fn()], updateServiceWorker: vi.fn() });
+    useRegisterSWMock.mockReturnValue({
+      needRefresh: [false, vi.fn()],
+      updateServiceWorker: vi.fn(),
+    });
     render();
     expect(container.querySelector('[data-testid="update-banner"]')).toBeNull();
   });
 
   it('shows the banner when an update is waiting', () => {
-    useRegisterSWMock.mockReturnValue({ needRefresh: [true, vi.fn()], updateServiceWorker: vi.fn() });
+    useRegisterSWMock.mockReturnValue({
+      needRefresh: [true, vi.fn()],
+      updateServiceWorker: vi.fn(),
+    });
     render();
     expect(container.querySelector('[data-testid="update-banner"]')).not.toBeNull();
   });
@@ -49,7 +57,9 @@ describe('UpdateBanner', () => {
     useRegisterSWMock.mockReturnValue({ needRefresh: [true, setNeedRefresh], updateServiceWorker });
     render();
     const later = container.querySelector<HTMLButtonElement>('[data-testid="update-later"]')!;
-    act(() => { later.click(); });
+    act(() => {
+      later.click();
+    });
     expect(setNeedRefresh).toHaveBeenCalledWith(false);
     expect(updateServiceWorker).not.toHaveBeenCalled();
   });
@@ -59,7 +69,9 @@ describe('UpdateBanner', () => {
     useRegisterSWMock.mockReturnValue({ needRefresh: [true, vi.fn()], updateServiceWorker });
     render();
     const reload = container.querySelector<HTMLButtonElement>('[data-testid="update-reload"]')!;
-    act(() => { reload.click(); });
+    act(() => {
+      reload.click();
+    });
     expect(updateServiceWorker).toHaveBeenCalledWith(true);
   });
 });

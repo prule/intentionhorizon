@@ -21,14 +21,14 @@ bookworm dev container, with Node and Java layered on as dev container features
 (so the exact versions are pinned) and first-run setup in
 [`post-create.sh`](.devcontainer/post-create.sh).
 
-| Tool | Why it's there |
-| --- | --- |
-| **Node 24.18.0** | Pinned to match `.node-version` and CI, via the Node feature. |
-| **pnpm 11.5.2** | Pinned to `package.json`'s `packageManager` field via corepack. |
-| **Java (headless JRE)** | `serenity-bdd` generates the BDD report by running a Java jar. |
+| Tool                           | Why it's there                                                                                |
+| ------------------------------ | --------------------------------------------------------------------------------------------- |
+| **Node 24.18.0**               | Pinned to match `.node-version` and CI, via the Node feature.                                 |
+| **pnpm 11.5.2**                | Pinned to `package.json`'s `packageManager` field via corepack.                               |
+| **Java (headless JRE)**        | `serenity-bdd` generates the BDD report by running a Java jar.                                |
 | **Playwright + Chromium deps** | e2e tests. OS libs are baked in; the browser binary is installed per-project on first create. |
-| **Claude Code CLI** (`claude`) | The AI pair-programmer that drives the workflow below. |
-| **OpenSpec CLI** (`openspec`) | Spec-driven change management. |
+| **Claude Code CLI** (`claude`) | The AI pair-programmer that drives the workflow below.                                        |
+| **OpenSpec CLI** (`openspec`)  | Spec-driven change management.                                                                |
 
 Container facts worth knowing:
 
@@ -69,8 +69,8 @@ Container**.
 JetBrains reads the same `.devcontainer/devcontainer.json`.
 
 1. Ensure Docker is running.
-2. **From a fresh checkout:** *File → Remote Development → Dev Containers → New
-   Dev Container → From Local Project* (or *From VCS*), then point it at
+2. **From a fresh checkout:** _File → Remote Development → Dev Containers → New
+   Dev Container → From Local Project_ (or _From VCS_), then point it at
    `.devcontainer/devcontainer.json`.
    **From an already-open project:** right-click `devcontainer.json` → **Create
    Dev Container and Mount Sources** (or use the gutter icon next to it).
@@ -137,6 +137,7 @@ git push
 
 > Set your commit identity if it isn't inherited (VS Code copies your host
 > `.gitconfig`; JetBrains may not):
+>
 > ```bash
 > git config --global user.name  "Your Name"
 > git config --global user.email "you@example.com"
@@ -168,17 +169,19 @@ claude
 
 All run inside the container:
 
-| Command | What it does |
-| --- | --- |
-| `pnpm dev` | Vite dev server on `5173`. |
-| `pnpm build` | Type-check (`tsc --noEmit`) then production build. |
-| `pnpm typecheck` | Types only. |
-| `pnpm test:unit` | Vitest run (jsdom + fake-indexeddb). |
-| `pnpm test:watch` | Vitest in watch mode. |
-| `pnpm e2e` | Playwright + Serenity/JS Screenplay e2e (Chromium). |
-| `pnpm e2e:headed` / `pnpm e2e:debug` | e2e with a visible browser / the inspector. |
-| `pnpm e2e:report` | Run e2e, then generate the Serenity BDD report (needs Java — present in the container). |
-| `pnpm preview` | Serve the production build on `4173`. |
+| Command                              | What it does                                                                            |
+| ------------------------------------ | --------------------------------------------------------------------------------------- |
+| `pnpm dev`                           | Vite dev server on `5173`.                                                              |
+| `pnpm build`                         | Type-check (`tsc --noEmit`) then production build.                                      |
+| `pnpm typecheck`                     | Types only.                                                                             |
+| `pnpm test:unit`                     | Vitest run (jsdom + fake-indexeddb).                                                    |
+| `pnpm test:watch`                    | Vitest in watch mode.                                                                   |
+| `pnpm e2e`                           | Playwright + Serenity/JS Screenplay e2e (Chromium).                                     |
+| `pnpm e2e:headed` / `pnpm e2e:debug` | e2e with a visible browser / the inspector.                                             |
+| `pnpm e2e:report`                    | Run e2e, then generate the Serenity BDD report (needs Java — present in the container). |
+| `pnpm preview`                       | Serve the production build on `4173`.                                                   |
+| `pnpm format`                        | Format the whole repo with Prettier.                                                    |
+| `pnpm format:check`                  | Check formatting without writing (`prettier --check .`).                                |
 
 Enable the mock data source by adding to `.env.local` (see
 [`.env.example`](.env.example)):
@@ -189,11 +192,33 @@ VITE_ENABLE_MOCK_DATA=true
 
 ---
 
+## Git hooks
+
+Husky-managed hooks under [`.husky/`](.husky) install automatically the first
+time you run `pnpm install` (via the `prepare` script) — no separate setup
+step.
+
+- **`pre-commit`** runs `lint-staged`, which formats staged files with
+  Prettier and re-stages the result. It also stamps the detected `claude` /
+  `openspec` CLI versions into `versions/claude-code` and `versions/openspec`
+  (see [`scripts/detect-tool-versions.sh`](scripts/detect-tool-versions.sh)),
+  staging either file only when its content actually changes — so
+  `git log versions/claude-code` shows exactly when that tool's version
+  changed.
+- **`prepare-commit-msg`** appends `Claude-Code-Version:` / `OpenSpec-Version:`
+  trailers to the commit message using the same detection script.
+
+Both hooks are best-effort: a CLI missing from `PATH` (e.g. outside the Dev
+Container) just means that trailer/file update is skipped — a commit is never
+blocked by version detection.
+
+---
+
 ## The development process: Claude + OpenSpec
 
 Requirements on this project move constantly, so every non-trivial change is
 driven as a **spec-driven change** rather than an ad-hoc chat instruction. The
-loop is: *propose a spec → implement against it → archive it.* [OpenSpec](https://github.com/Fission-AI/OpenSpec)
+loop is: _propose a spec → implement against it → archive it._ [OpenSpec](https://github.com/Fission-AI/OpenSpec)
 holds the specs under [`openspec/`](openspec); [Claude Code](https://www.anthropic.com/claude-code)
 does the mechanical work through the `/opsx` slash commands.
 
@@ -212,7 +237,7 @@ matching skills live in [`.claude/`](.claude), so they're available immediately.
 
 Run these as slash commands inside a Claude Code session:
 
-1. **`/opsx:explore`** — *(optional)* think through an idea, investigate a
+1. **`/opsx:explore`** — _(optional)_ think through an idea, investigate a
    problem, or clarify requirements before committing to a change.
 2. **`/opsx:propose <name-or-description>`** — create a new change under
    `openspec/changes/<name>/` and generate its artifacts:
@@ -220,7 +245,7 @@ Run these as slash commands inside a Claude Code session:
    - `design.md` — how
    - `tasks.md` — the implementation steps
    - plus the spec deltas
-   Under the hood this runs `openspec new change` and `openspec status`.
+     Under the hood this runs `openspec new change` and `openspec status`.
 3. **`/opsx:apply`** — implement the change: work through `tasks.md`, editing
    real source and tests until the change is complete and green.
 4. **`/opsx:archive`** — once implemented and verified, move the change into

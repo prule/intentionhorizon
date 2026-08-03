@@ -1,0 +1,26 @@
+node_modules
+dist
+dist-ssr
+target
+playwright-report
+test-results
+blob-report
+pnpm-lock.yaml
+.git-original
+
+# OpenSpec proposals/specs/tasks are prose contracts, not code — leave them
+# exactly as authored rather than auto-reformatting on every commit.
+openspec/
+
+# Frozen Claude Design handoff export (see ReadMe.md) — a point-in-time
+# artifact, not live source; reformatting it produces huge unrelated diffs.
+intention-horizon-handoff/
+
+# OpenSpec-generated skill/command docs, mirrored under both dirs — treat as
+# vendored tool config rather than project prose.
+.agent/
+.claude/
+
+# Legacy planning note with a hand-aligned ASCII example table; Prettier's
+# markdown formatter collapses the intentional whitespace and destroys it.
+IntentionHorizon.md

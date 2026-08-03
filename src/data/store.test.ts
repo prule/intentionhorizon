@@ -1,9 +1,20 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  initStore, load, resetSeed,
-  addCategory, addIntention, toggleCompletion,
-  toCSV, parseCSV, importCSV,
-  dateKey, parseKey, addDays, today, statusFor, windowCount,
+  initStore,
+  load,
+  resetSeed,
+  addCategory,
+  addIntention,
+  toggleCompletion,
+  toCSV,
+  parseCSV,
+  importCSV,
+  dateKey,
+  parseKey,
+  addDays,
+  today,
+  statusFor,
+  windowCount,
   type Intention,
 } from './store';
 
@@ -22,7 +33,7 @@ function snapshot() {
   const intentions = s.intentions
     .map((it) => ({
       name: it.name,
-      category: it.categoryId ? catById.get(it.categoryId) ?? null : null,
+      category: it.categoryId ? (catById.get(it.categoryId) ?? null) : null,
       days: Object.keys(s.completions[it.id] ?? {}).sort(),
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -52,18 +63,28 @@ describe('parseCSV', () => {
   });
 
   it('handles quoted fields with commas and escaped quotes', () => {
-    const res = parseCSV('date,category,intention,completed\n2026-01-05,"Home, etc","Say ""hi""",1\n');
-    expect(res.rows[0]).toEqual({ date: '2026-01-05', category: 'Home, etc', intention: 'Say "hi"' });
+    const res = parseCSV(
+      'date,category,intention,completed\n2026-01-05,"Home, etc","Say ""hi""",1\n',
+    );
+    expect(res.rows[0]).toEqual({
+      date: '2026-01-05',
+      category: 'Home, etc',
+      intention: 'Say "hi"',
+    });
   });
 
   it('skips rows with an unparseable (non-calendar) date', () => {
-    const res = parseCSV('date,category,intention,completed\n2026-13-99,Health,Bad,1\n2026-01-05,Health,Read,1\n');
+    const res = parseCSV(
+      'date,category,intention,completed\n2026-13-99,Health,Bad,1\n2026-01-05,Health,Read,1\n',
+    );
     expect(res.rows.map((r) => r.intention)).toEqual(['Read']);
     expect(res.skipped).toBe(1);
   });
 
   it('skips rows whose completed value is falsy', () => {
-    const res = parseCSV('date,category,intention,completed\n2026-01-05,Health,Read,0\n2026-01-06,Health,Read,1\n');
+    const res = parseCSV(
+      'date,category,intention,completed\n2026-01-05,Health,Read,0\n2026-01-06,Health,Read,1\n',
+    );
     expect(res.rows.map((r) => r.date)).toEqual(['2026-01-06']);
     expect(res.skipped).toBe(1);
   });
@@ -73,7 +94,14 @@ describe('importCSV / toCSV round-trip', () => {
   it('reconstructs categories, intentions, and completed days from an export', () => {
     addCategory('Health');
     const health = load().categories[0].id;
-    addIntention({ name: 'Read', categoryId: health, color: 'blue', targetEnabled: false, targetCompletions: 3, targetPeriodDays: 7 });
+    addIntention({
+      name: 'Read',
+      categoryId: health,
+      color: 'blue',
+      targetEnabled: false,
+      targetCompletions: 3,
+      targetPeriodDays: 7,
+    });
     const read = intentionNamed('Read').id;
     const days = [dateKey(today()), dateKey(addDays(today(), -1)), dateKey(addDays(today(), -2))];
     days.forEach((d) => toggleCompletion(read, d));
@@ -94,14 +122,23 @@ describe('importCSV merge', () => {
   it('merges by name without duplicating, and unions completed days', () => {
     addCategory('Health');
     const health = load().categories[0].id;
-    addIntention({ name: 'Read', categoryId: health, color: 'blue', targetEnabled: false, targetCompletions: 3, targetPeriodDays: 7 });
+    addIntention({
+      name: 'Read',
+      categoryId: health,
+      color: 'blue',
+      targetEnabled: false,
+      targetCompletions: 3,
+      targetPeriodDays: 7,
+    });
     toggleCompletion(intentionNamed('Read').id, '2026-01-01');
 
-    const res = importCSV([
-      'date,category,intention,completed',
-      '2026-01-02,Health,Read,1',   // existing intention, new day
-      '2026-01-02,Wellness,Yoga,1', // brand-new category + intention
-    ].join('\n'));
+    const res = importCSV(
+      [
+        'date,category,intention,completed',
+        '2026-01-02,Health,Read,1', // existing intention, new day
+        '2026-01-02,Wellness,Yoga,1', // brand-new category + intention
+      ].join('\n'),
+    );
 
     expect(res.ok).toBe(true);
     expect(res.categoriesAdded).toBe(1);
@@ -110,7 +147,10 @@ describe('importCSV merge', () => {
     const s = load();
     expect(s.intentions.filter((it) => it.name === 'Read')).toHaveLength(1);
     expect(s.categories.map((c) => c.name).sort()).toEqual(['Health', 'Wellness']);
-    expect(Object.keys(s.completions[intentionNamed('Read').id]).sort()).toEqual(['2026-01-01', '2026-01-02']);
+    expect(Object.keys(s.completions[intentionNamed('Read').id]).sort()).toEqual([
+      '2026-01-01',
+      '2026-01-02',
+    ]);
   });
 
   it('leaves the store untouched when the file is invalid', () => {
@@ -145,7 +185,14 @@ describe('computation', () => {
   });
 
   it('windowCount counts completions in the trailing window', () => {
-    addIntention({ name: 'Walk', categoryId: null, color: 'moss', targetEnabled: false, targetCompletions: 3, targetPeriodDays: 7 });
+    addIntention({
+      name: 'Walk',
+      categoryId: null,
+      color: 'moss',
+      targetEnabled: false,
+      targetCompletions: 3,
+      targetPeriodDays: 7,
+    });
     const walk = intentionNamed('Walk').id;
     [0, 1, 2, 9].forEach((off) => toggleCompletion(walk, dateKey(addDays(today(), -off))));
     expect(windowCount(walk, today(), 7)).toBe(3); // the day -9 falls outside the 7-day window

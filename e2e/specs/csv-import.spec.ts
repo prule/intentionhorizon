@@ -16,7 +16,10 @@ import { IntentionList, CategoryList } from '../questions';
  * Import is async, so post-import checks use Ensure.eventually to let it settle.
  */
 describe('Importing data from CSV', () => {
-  it('round-trips: export, clear, then import restores logged intentions', async ({ actor, page }) => {
+  it('round-trips: export, clear, then import restores logged intentions', async ({
+    actor,
+    page,
+  }) => {
     await actor.attemptsTo(GoToTab.to('settings'));
 
     // Capture the real export. Default seed: "Read" has 3 completed days in
@@ -39,7 +42,9 @@ describe('Importing data from CSV', () => {
     // Import the captured CSV; Read (and its Health category) come back.
     await actor.attemptsTo(GoToTab.to('settings'), ModalDialog.acceptNext());
     await page.getByTestId('import-csv-input').setInputFiles({
-      name: 'export.csv', mimeType: 'text/csv', buffer: Buffer.from(csv),
+      name: 'export.csv',
+      mimeType: 'text/csv',
+      buffer: Buffer.from(csv),
     });
     await actor.attemptsTo(
       Ensure.eventually(CategoryList.names(), contain('Health')),
@@ -62,7 +67,9 @@ describe('Importing data from CSV', () => {
 
     await actor.attemptsTo(GoToTab.to('settings'), ModalDialog.acceptNext());
     await page.getByTestId('import-csv-input').setInputFiles({
-      name: 'merge.csv', mimeType: 'text/csv', buffer: Buffer.from(csv),
+      name: 'merge.csv',
+      mimeType: 'text/csv',
+      buffer: Buffer.from(csv),
     });
 
     await actor.attemptsTo(
@@ -74,7 +81,8 @@ describe('Importing data from CSV', () => {
     );
     // exactly one "Read" row — the merge must not duplicate the seeded one
     const readRows = await page
-      .locator('[data-testid="intention-row"][data-intention-name="Read"]').count();
+      .locator('[data-testid="intention-row"][data-intention-name="Read"]')
+      .count();
     expect(readRows).toBe(1);
   });
 
@@ -84,7 +92,9 @@ describe('Importing data from CSV', () => {
 
     await actor.attemptsTo(GoToTab.to('settings'), ModalDialog.acceptNext());
     await page.getByTestId('import-csv-input').setInputFiles({
-      name: 'bad.csv', mimeType: 'text/csv', buffer: Buffer.from(csv),
+      name: 'bad.csv',
+      mimeType: 'text/csv',
+      buffer: Buffer.from(csv),
     });
 
     await actor.attemptsTo(
