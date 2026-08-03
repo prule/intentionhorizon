@@ -25,15 +25,15 @@ stripped from production builds.
 Anything after `--` is forwarded to `playwright test`, so the npm scripts above
 compose with Playwright's own flags:
 
-| Goal | Command |
-|------|---------|
-| One spec file | `npm run e2e -- e2e/specs/targets.spec.ts` |
-| One test by title | `npm run e2e -- -g "toggling off reverts"` |
-| Watch it in a real browser | `npm run e2e:headed -- e2e/specs/targets.spec.ts` |
+| Goal                                    | Command                                                          |
+| --------------------------------------- | ---------------------------------------------------------------- |
+| One spec file                           | `npm run e2e -- e2e/specs/targets.spec.ts`                       |
+| One test by title                       | `npm run e2e -- -g "toggling off reverts"`                       |
+| Watch it in a real browser              | `npm run e2e:headed -- e2e/specs/targets.spec.ts`                |
 | Step through interaction-by-interaction | `npm run e2e:debug -- -g "..."` (opens the Playwright Inspector) |
-| Slow a headed run down | `npm run e2e:headed -- --workers=1 e2e/specs/targets.spec.ts` |
-| Force serial execution | `npm run e2e -- --workers=1` |
-| Update on failure, keep going | `npm run e2e -- --max-failures=0` |
+| Slow a headed run down                  | `npm run e2e:headed -- --workers=1 e2e/specs/targets.spec.ts`    |
+| Force serial execution                  | `npm run e2e -- --workers=1`                                     |
+| Update on failure, keep going           | `npm run e2e -- --max-failures=0`                                |
 
 `-g` greps against the test title (the string passed to `it(...)`); a spec path
 runs just that file. The suite is `fullyParallel`, so targeting a single test
@@ -72,7 +72,7 @@ open target/site/serenity/index.html
 - `target/` is git-ignored.
 
 **Screenshots.** The `Photographer` captures failure screenshots by default
-(`TakePhotosOfFailures`). To capture a screenshot of *every* interaction — useful
+(`TakePhotosOfFailures`). To capture a screenshot of _every_ interaction — useful
 for a visual walk-through of a passing run — set `PHOTOS=all`:
 
 ```bash

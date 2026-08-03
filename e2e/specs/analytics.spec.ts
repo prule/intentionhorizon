@@ -18,8 +18,24 @@ import { StreakValue, TotalsSum } from '../questions';
 const analyticsSeed: E2ESeedSpec = {
   categories: [{ id: 'c_health', name: 'Health' }],
   intentions: [
-    { id: 'i_read', name: 'Read', categoryId: 'c_health', color: 'blue', targetEnabled: false, targetCompletions: 5, targetPeriodDays: 7 },
-    { id: 'i_work', name: 'Workout', categoryId: 'c_health', color: 'clay', targetEnabled: false, targetCompletions: 4, targetPeriodDays: 7 },
+    {
+      id: 'i_read',
+      name: 'Read',
+      categoryId: 'c_health',
+      color: 'blue',
+      targetEnabled: false,
+      targetCompletions: 5,
+      targetPeriodDays: 7,
+    },
+    {
+      id: 'i_work',
+      name: 'Workout',
+      categoryId: 'c_health',
+      color: 'clay',
+      targetEnabled: false,
+      targetCompletions: 4,
+      targetPeriodDays: 7,
+    },
   ],
   completionsByOffset: {
     i_read: [0, 1, 2],

@@ -32,10 +32,9 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-
 
       # Only Chromium is configured in playwright.config.ts.
       - run: pnpm exec playwright install --with-deps chromium

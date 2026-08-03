@@ -1,6 +1,13 @@
 import { Question } from '@serenity-js/core';
 import { Attribute, Page, Text } from '@serenity-js/web';
-import { byTestId, categorySections, intentionRow, intentionRows, monthPickerOptions, targetBadge } from './elements';
+import {
+  byTestId,
+  categorySections,
+  intentionRow,
+  intentionRows,
+  monthPickerOptions,
+  targetBadge,
+} from './elements';
 
 /** The active tab as reflected in the URL hash slug (journal | insights | manage). */
 export const ActiveTab = {
@@ -14,7 +21,10 @@ export const ActiveTab = {
 /** The human-readable label shown by the Journal screen's date navigator. */
 export const VisibleDate = {
   label: () => Text.of(byTestId('date-label')).describedAs('the visible date'),
-  key: () => Attribute.called('data-date-key').of(byTestId('date-label')).describedAs('the visible date key'),
+  key: () =>
+    Attribute.called('data-date-key')
+      .of(byTestId('date-label'))
+      .describedAs('the visible date key'),
 };
 
 /** Whether an intention is marked complete for the currently shown day. */
@@ -30,7 +40,9 @@ export const CompletionState = {
 export const WindowCount = {
   forTarget: (name: string) =>
     Question.about(`the window count for "${name}"`, async (actor) => {
-      const text = await Text.of(byTestId('stat-target-count').of(intentionRow(name))).answeredBy(actor);
+      const text = await Text.of(byTestId('stat-target-count').of(intentionRow(name))).answeredBy(
+        actor,
+      );
       return Number(text?.trim() ?? '0');
     }),
 };

@@ -75,10 +75,7 @@
   // reads `jetbrains` (and ignores the other). Both open the SAME container.
   "customizations": {
     "vscode": {
-      "extensions": [
-        "esbenp.prettier-vscode",
-        "ms-playwright.playwright"
-      ],
+      "extensions": ["esbenp.prettier-vscode", "ms-playwright.playwright"],
       "settings": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -89,9 +86,7 @@
       // WebStorm is the natural fit for this React/TS/Vite frontend. Switch to
       // "IntelliJ" to use IntelliJ IDEA Ultimate instead.
       "backend": "WebStorm",
-      "plugins": [
-        "intellij.prettierJS"
-      ]
+      "plugins": ["intellij.prettierJS"]
     }
   }
 }

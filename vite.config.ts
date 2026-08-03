@@ -27,8 +27,7 @@ function computeVersion(): { version: string; sha: string } {
   // Prefer main's history so the deployed number is authoritative regardless of
   // which branch is checked out; fall back to HEAD (equals main on a Pages build).
   const minor =
-    git('rev-list --first-parent --count main') ??
-    git('rev-list --first-parent --count HEAD');
+    git('rev-list --first-parent --count main') ?? git('rev-list --first-parent --count HEAD');
   if (minor == null) return { version: 'dev', sha };
   return { version: `v${MAJOR}.${minor}`, sha };
 }

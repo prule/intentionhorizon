@@ -25,8 +25,17 @@ const HISTORY_DAYS = 60; // offsets 0 (today) .. HISTORY_DAYS-1
 //    pulls in Dexie, which assumes a browser/IndexedDB environment) ──
 const pad = (n) => String(n).padStart(2, '0');
 const dateKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); x.setHours(0, 0, 0, 0); return x; };
-const startOfDay = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+const addDays = (d, n) => {
+  const x = new Date(d);
+  x.setDate(x.getDate() + n);
+  x.setHours(0, 0, 0, 0);
+  return x;
+};
+const startOfDay = (d) => {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+};
 
 // ── fixture dataset, transcribed from images/intentionhorizon.webp ──
 // recentOffsets: hand-picked day-offsets (0 = today) completed within the
@@ -36,21 +45,69 @@ const startOfDay = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); retur
 // when (offset % strideDays) === stridePhase — a fixed, deterministic pattern
 // (not hand-picked) that just keeps older history populated.
 const INTENTIONS = [
-  { name: 'Workout', category: 'Movement', recentOffsets: [0, 1, 2, 4, 5, 6], strideDays: 2, stridePhase: 0 },
-  { name: 'Walk 8k steps', category: 'Movement', recentOffsets: [1, 3, 4, 5, 6], strideDays: 2, stridePhase: 1 },
-  { name: 'Stretch', category: 'Movement', recentOffsets: [0, 1, 3, 4, 6], strideDays: 3, stridePhase: 0 },
-  { name: 'Meditate', category: 'Mind', recentOffsets: [1, 2, 4, 6], strideDays: 2, stridePhase: 0 },
-  { name: 'Read 20 min', category: 'Mind', recentOffsets: [0, 1, 2, 4, 6], strideDays: 2, stridePhase: 1 },
-  { name: 'No phone in bed', category: 'Mind', recentOffsets: [0, 2, 4, 6], strideDays: 3, stridePhase: 1 },
+  {
+    name: 'Workout',
+    category: 'Movement',
+    recentOffsets: [0, 1, 2, 4, 5, 6],
+    strideDays: 2,
+    stridePhase: 0,
+  },
+  {
+    name: 'Walk 8k steps',
+    category: 'Movement',
+    recentOffsets: [1, 3, 4, 5, 6],
+    strideDays: 2,
+    stridePhase: 1,
+  },
+  {
+    name: 'Stretch',
+    category: 'Movement',
+    recentOffsets: [0, 1, 3, 4, 6],
+    strideDays: 3,
+    stridePhase: 0,
+  },
+  {
+    name: 'Meditate',
+    category: 'Mind',
+    recentOffsets: [1, 2, 4, 6],
+    strideDays: 2,
+    stridePhase: 0,
+  },
+  {
+    name: 'Read 20 min',
+    category: 'Mind',
+    recentOffsets: [0, 1, 2, 4, 6],
+    strideDays: 2,
+    stridePhase: 1,
+  },
+  {
+    name: 'No phone in bed',
+    category: 'Mind',
+    recentOffsets: [0, 2, 4, 6],
+    strideDays: 3,
+    stridePhase: 1,
+  },
   { name: 'Invest', category: 'Finance', recentOffsets: [2, 5], strideDays: 4, stridePhase: 0 },
-  { name: 'No-spend day', category: 'Finance', recentOffsets: [0, 3, 5], strideDays: 3, stridePhase: 2 },
-  { name: 'Call someone', category: 'Connection', recentOffsets: [0, 1, 3, 4, 6], strideDays: 2, stridePhase: 0 },
+  {
+    name: 'No-spend day',
+    category: 'Finance',
+    recentOffsets: [0, 3, 5],
+    strideDays: 3,
+    stridePhase: 2,
+  },
+  {
+    name: 'Call someone',
+    category: 'Connection',
+    recentOffsets: [0, 1, 3, 4, 6],
+    strideDays: 2,
+    stridePhase: 0,
+  },
 ];
 
 function completedOffsets(intention) {
   const offsets = new Set(intention.recentOffsets);
   for (let o = 7; o < HISTORY_DAYS; o++) {
-    if ((o % intention.strideDays) === intention.stridePhase) offsets.add(o);
+    if (o % intention.strideDays === intention.stridePhase) offsets.add(o);
   }
   return offsets;
 }

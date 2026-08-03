@@ -13,8 +13,13 @@ const COLORS = ['clay', 'moss', 'amber', 'teal', 'blue', 'plum', 'sage', 'rose']
 const longSeed: E2ESeedSpec = {
   categories: [{ id: 'c_daily', name: 'Daily' }],
   intentions: Array.from({ length: 14 }, (_, i) => ({
-    id: `i_${i}`, name: `Intention ${i}`, categoryId: 'c_daily',
-    color: COLORS[i % COLORS.length], targetEnabled: false, targetCompletions: 3, targetPeriodDays: 7,
+    id: `i_${i}`,
+    name: `Intention ${i}`,
+    categoryId: 'c_daily',
+    color: COLORS[i % COLORS.length],
+    targetEnabled: false,
+    targetCompletions: 3,
+    targetPeriodDays: 7,
   })),
   completionsByOffset: {},
 };
@@ -73,7 +78,9 @@ const SummaryShows = {
       const page = await Page.current().answeredBy(actor);
       return page.executeScript<boolean, [number]>((count) => {
         const el = document.querySelector('[data-testid="screen-entry"]');
-        return !!el && new RegExp(`${count} of \\d+ intentions complete`).test(el.textContent || '');
+        return (
+          !!el && new RegExp(`${count} of \\d+ intentions complete`).test(el.textContent || '')
+        );
       }, n);
     }),
 };

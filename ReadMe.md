@@ -5,13 +5,13 @@
 **Intention Horizon** is a high-density, minimalist Progressive Web App (PWA) designed for utilitarian habit tracking. It focuses on the intentional completion of daily goals rather than passive habit formation, providing users with immediate feedback through data-rich grids and consistency visualizations.
 
 [Project Brief](project_brief_intention_horizon.md)
-[UI Design](Intention%20Horizon-handoff.zip) -  Claude Design exported as a handoff to Claude Code.
+[UI Design](Intention%20Horizon-handoff.zip) - Claude Design exported as a handoff to Claude Code.
 [Development](DEVELOPMENT.md) - Dev Container setup (VS Code / IntelliJ / WebStorm) and the Claude + OpenSpec workflow.
 
 ## Environment
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
+| Variable                | Default     | Purpose                                                                                                                                                       |
+| ----------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `VITE_ENABLE_MOCK_DATA` | unset (off) | Set to `true` to expose the mock (sample) data source and the Mock/Real switcher in Settings. When off, the app always uses real data and hides the switcher. |
 
 Enable mock data locally by adding to `.env.local`:
@@ -33,7 +33,6 @@ current date.
 
 ---
 
-
 I built **Intention Horizon** as a sample app — something concrete to point at when discussing how to build software with AI. It's a local-first habit tracker: define intentions, group them by category, tick them off each day, and watch your count move against a target you set — N completions over M days. React PWA, IndexedDB via Dexie, no backend. That made it a good test bed: small enough to finish, real enough to have edge cases.
 
 ## The design handoff is where tools win or lose
@@ -50,7 +49,7 @@ Claude Design and Claude Code, by contrast, were a breeze. Nice UI, and it conve
 That produced JSX. I then asked Claude Code to convert it to TypeScript, which became its own tracked change. The lesson isn't "Claude good, other tool bad" — it's that **the export-and-handoff seam is the thing that matters**. A design that exports as a clean artifact you can hand an agent beats a prettier design that doesn't.
 
 {{< notice type="tip" >}}
-Generate JSX first, get it rendering, *then* migrate to TypeScript as a separate step. Converting a working component to types is a mechanical, reviewable change. Asking for typed code cold mixes two kinds of error — layout and types — into one diff.
+Generate JSX first, get it rendering, _then_ migrate to TypeScript as a separate step. Converting a working component to types is a mechanical, reviewable change. Asking for typed code cold mixes two kinds of error — layout and types — into one diff.
 {{< /notice >}}
 
 ## OpenSpec for evolving requirements
@@ -94,7 +93,7 @@ describe('Logging a completion', () => {
 
 ### Why Screenplay
 
-Page Object tests answer *"what's on the page."* Screenplay tests answer *"what is the user doing."*
+Page Object tests answer _"what's on the page."_ Screenplay tests answer _"what is the user doing."_
 
 - **Reads as a user journey.** An actor — named Tess — `attemptsTo` a sequence of Tasks. The test is living documentation, not a pile of selector calls.
 - **One responsibility per layer.** Locators live in `elements.ts`, user actions in `tasks.ts`, state reads in `questions.ts`. Specs compose Tasks and Questions and never touch a selector.
@@ -124,9 +123,8 @@ Determinism comes from a seed injected onto `window` before the app boots, gated
 **Define intentions → tick them off daily → watch your horizon.**
 {{< /center >}}
 
-
 - **Daily entry.** Intentions grouped by category (Exercise, Finance, Focus). Toggle completion for today, and scroll back through a trailing window to fill in or review prior days. Each row shows a single live stat: completions in the trailing target period versus the target.
-- **Flexible targets with status.** Set one optional target per intention — *N completions over M days* (e.g. `3× per 7 days`), which covers everything from "once a year" to "twice a fortnight" with one concept. The current count renders under / on / over target, so a glance tells you where you stand — no mental arithmetic.
+- **Flexible targets with status.** Set one optional target per intention — _N completions over M days_ (e.g. `3× per 7 days`), which covers everything from "once a year" to "twice a fortnight" with one concept. The current count renders under / on / over target, so a glance tells you where you stand — no mental arithmetic.
 - **Analytics.** A 7-column consistency grid (one per weekday) shades by how many intentions hit target, plus month-over-month trends and streak insights.
 - **Local-first and portable.** Everything is stored in IndexedDB on your device — private by default, no account — and exportable to CSV whenever you want your data out.
 
@@ -139,4 +137,4 @@ The user benefit is the design intent: **low-friction, high-density, honest feed
 - **OpenSpec** to turn moving requirements into discrete, reviewable changes an agent can implement against a contract.
 - **Screenplay + Serenity/JS** to get e2e tests that read as user journeys, localize change to one layer, and double as living documentation.
 
-None of these are AI-specific tricks. They're ordinary good practice — clean handoffs, typed code, written specs, layered tests. What AI changes is the cost of *following* them: with the seams in place, Claude Code did the mechanical work, and I spent my time on intent.
+None of these are AI-specific tricks. They're ordinary good practice — clean handoffs, typed code, written specs, layered tests. What AI changes is the cost of _following_ them: with the seams in place, Claude Code did the mechanical work, and I spent my time on intent.

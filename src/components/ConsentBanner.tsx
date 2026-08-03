@@ -22,17 +22,30 @@ export function ConsentBanner() {
   };
 
   return (
-    <div className="consent-banner" role="dialog" aria-label="Privacy choices" data-testid="consent-banner">
+    <div
+      className="consent-banner"
+      role="dialog"
+      aria-label="Privacy choices"
+      data-testid="consent-banner"
+    >
       <div className="consent-text">
         Your intentions stay on this device. We’d also like to use{' '}
-        <strong>analytics cookies</strong> to see how the app is used. You can
-        change this anytime in Manage.
+        <strong>analytics cookies</strong> to see how the app is used. You can change this anytime
+        in Manage.
       </div>
       <div className="consent-actions">
-        <button className="ih-btn consent-btn consent-decline" data-testid="consent-decline" onClick={() => choose('denied')}>
+        <button
+          className="ih-btn consent-btn consent-decline"
+          data-testid="consent-decline"
+          onClick={() => choose('denied')}
+        >
           Decline
         </button>
-        <button className="ih-btn consent-btn consent-accept" data-testid="consent-accept" onClick={() => choose('granted')}>
+        <button
+          className="ih-btn consent-btn consent-accept"
+          data-testid="consent-accept"
+          onClick={() => choose('granted')}
+        >
           Accept
         </button>
       </div>

@@ -17,8 +17,16 @@ import { Guide } from './screens/Guide';
 // URL is the source of truth for the active page. Readable slugs map to the
 // internal tab ids used throughout the app.
 const DEFAULT_TAB = 'entry';
-const TAB_TO_SLUG: Record<string, string> = { entry: 'journal', analytics: 'insights', settings: 'manage' };
-const SLUG_TO_TAB: Record<string, string> = { journal: 'entry', insights: 'analytics', manage: 'settings' };
+const TAB_TO_SLUG: Record<string, string> = {
+  entry: 'journal',
+  analytics: 'insights',
+  settings: 'manage',
+};
+const SLUG_TO_TAB: Record<string, string> = {
+  journal: 'entry',
+  insights: 'analytics',
+  manage: 'settings',
+};
 
 const tabToHash = (tab: string): string => `#/${TAB_TO_SLUG[tab] || TAB_TO_SLUG[DEFAULT_TAB]}`;
 // returns null for empty/unknown hashes
@@ -33,7 +41,7 @@ function initialTab(): string {
   const fromHash = hashToTab(window.location.hash);
   if (fromHash) return fromHash;
   const legacy = localStorage.getItem('ih-tab');
-  const tab = (legacy && TAB_TO_SLUG[legacy]) ? legacy : DEFAULT_TAB;
+  const tab = legacy && TAB_TO_SLUG[legacy] ? legacy : DEFAULT_TAB;
   window.history.replaceState(null, '', tabToHash(tab));
   return tab;
 }
@@ -47,14 +55,17 @@ export default function App() {
   const openGuide = React.useCallback(() => setGuideOpen(true), []);
 
   // navigation updates the URL (push); the hashchange listener drives state
-  const setTab = React.useCallback((next: string) => { window.location.hash = tabToHash(next); }, []);
+  const setTab = React.useCallback((next: string) => {
+    window.location.hash = tabToHash(next);
+  }, []);
 
   // URL is source of truth: sync state on hashchange (Back/Forward, external edits)
   React.useEffect(() => {
     const onHashChange = () => {
       const next = hashToTab(window.location.hash);
       if (next) setTabState((cur) => (cur === next ? cur : next));
-      else window.history.replaceState(null, '', tabToHash(DEFAULT_TAB)), setTabState(DEFAULT_TAB);
+      else
+        (window.history.replaceState(null, '', tabToHash(DEFAULT_TAB)), setTabState(DEFAULT_TAB));
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
@@ -65,9 +76,19 @@ export default function App() {
   const [date, setDate] = React.useState<Date>(IH.today);
 
   const screen =
-    tab === 'entry' ? <EntryScreen date={date} setDate={setDate} version={version} bump={bump} openGuide={openGuide} />
-    : tab === 'analytics' ? <AnalyticsScreen version={version} />
-    : <SettingsScreen version={version} bump={bump} openGuide={openGuide} />;
+    tab === 'entry' ? (
+      <EntryScreen
+        date={date}
+        setDate={setDate}
+        version={version}
+        bump={bump}
+        openGuide={openGuide}
+      />
+    ) : tab === 'analytics' ? (
+      <AnalyticsScreen version={version} />
+    ) : (
+      <SettingsScreen version={version} bump={bump} openGuide={openGuide} />
+    );
 
   const guide = guideOpen ? <Guide onClose={() => setGuideOpen(false)} /> : null;
 
@@ -76,7 +97,18 @@ export default function App() {
       <div className="app-shell" style={{ display: 'flex' }}>
         <Sidebar tab={tab} setTab={setTab} openGuide={openGuide} />
         <main style={{ flex: 1, minWidth: 0, display: 'flex', justifyContent: 'center' }}>
-          <div style={{ flex: 1, minWidth: 0, maxWidth: 720, height: '100%', display: 'flex', flexDirection: 'column', paddingTop: 16, boxSizing: 'border-box' }}>
+          <div
+            style={{
+              flex: 1,
+              minWidth: 0,
+              maxWidth: 720,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              paddingTop: 16,
+              boxSizing: 'border-box',
+            }}
+          >
             {screen}
           </div>
         </main>
@@ -89,7 +121,15 @@ export default function App() {
 
   return (
     <div className="app-shell" style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingTop: 'max(14px, env(safe-area-inset-top))' }}>
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          paddingTop: 'max(14px, env(safe-area-inset-top))',
+        }}
+      >
         {screen}
       </div>
       <TabBar tab={tab} setTab={setTab} />

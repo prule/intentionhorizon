@@ -18,7 +18,7 @@ export type IntentionInput = {
   color: string;
   targetEnabled: boolean;
   targetCompletions: number; // how many times…
-  targetPeriodDays: number;  // …within this trailing N-day window
+  targetPeriodDays: number; // …within this trailing N-day window
 };
 export type Intention = IntentionInput & { id: string };
 
@@ -40,10 +40,10 @@ export type TargetStatus = 'under' | 'on' | 'above';
 
 // ── data sources (isolated local datasets) ──
 export type DataSource = 'mock' | 'real';
-const LEGACY_DB = 'intention-horizon';          // pre-toggle single database
+const LEGACY_DB = 'intention-horizon'; // pre-toggle single database
 const dbName = (src: DataSource): string => `intention-horizon-${src}`;
-const SOURCE_KEY = 'ih-data-source';            // localStorage: active source
-const MIGRATED_KEY = 'ih-ds-migrated';          // localStorage: legacy migration done
+const SOURCE_KEY = 'ih-data-source'; // localStorage: active source
+const MIGRATED_KEY = 'ih-ds-migrated'; // localStorage: legacy migration done
 
 // ── persisted row shapes (order is stored as an index column) ──
 type CategoryRow = Category & { order?: number };
@@ -59,9 +59,9 @@ class IntentionHorizonDB extends Dexie {
   constructor(name: string) {
     super(name);
     this.version(1).stores({
-      categories: 'id',                  // + name, order
-      intentions: 'id',                  // + name, categoryId, color, targetEnabled, targetCompletions, targetPeriodDays, order
-      completions: 'key, intentionId',   // key = `${intentionId}|${dateKey}`, + dateKey
+      categories: 'id', // + name, order
+      intentions: 'id', // + name, categoryId, color, targetEnabled, targetCompletions, targetPeriodDays, order
+      completions: 'key, intentionId', // key = `${intentionId}|${dateKey}`, + dateKey
     });
   }
 }
@@ -75,19 +75,47 @@ let currentSource: DataSource;
 // ── serialized write queue (keeps IndexedDB writes ordered, off the render path) ──
 let writeQ: Promise<unknown> = Promise.resolve();
 function enqueue(fn: () => PromiseLike<unknown>): Promise<unknown> {
-  writeQ = writeQ.then(fn).catch(() => { /* persistence is best-effort */ });
+  writeQ = writeQ.then(fn).catch(() => {
+    /* persistence is best-effort */
+  });
   return writeQ;
 }
 
 // ── date utils ──
 const pad = (n: number): string => String(n).padStart(2, '0');
-export const dateKey = (d: Date): string => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-export const parseKey = (k: string): Date => { const [y, m, dd] = k.split('-').map(Number); return new Date(y, m - 1, dd); };
-export const addDays = (d: Date, n: number): Date => { const x = new Date(d); x.setDate(x.getDate() + n); x.setHours(0, 0, 0, 0); return x; };
-const startOfDay = (d: Date): Date => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+export const dateKey = (d: Date): string =>
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+export const parseKey = (k: string): Date => {
+  const [y, m, dd] = k.split('-').map(Number);
+  return new Date(y, m - 1, dd);
+};
+export const addDays = (d: Date, n: number): Date => {
+  const x = new Date(d);
+  x.setDate(x.getDate() + n);
+  x.setHours(0, 0, 0, 0);
+  return x;
+};
+const startOfDay = (d: Date): Date => {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+};
 export const today = (): Date => startOfDay(new Date());
 export const sameKey = (a: Date, b: Date): boolean => dateKey(a) === dateKey(b);
-export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 export const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export function fmtDay(d: Date): string {
@@ -109,7 +137,8 @@ export const PALETTE: PaletteEntry[] = [
   { id: 'plum', var: 'var(--c-plum)', hex: '#9a6aae' },
   { id: 'rose', var: 'var(--c-rose)', hex: '#c46a6f' },
 ];
-export const colorVar = (id: string): string => (PALETTE.find((p) => p.id === id) || PALETTE[0]).var;
+export const colorVar = (id: string): string =>
+  (PALETTE.find((p) => p.id === id) || PALETTE[0]).var;
 
 // ── seed ──
 type SeedIntention = Intention & { freq: number };
@@ -122,15 +151,96 @@ function buildSeed(): AppState {
   ];
   // freq = daily completion probability used to fabricate believable history
   const intents: SeedIntention[] = [
-    { id: 'i_work', name: 'Workout', categoryId: 'c_move', color: 'clay', targetEnabled: true, targetCompletions: 4, targetPeriodDays: 7, freq: 0.55 },
-    { id: 'i_walk', name: 'Walk 8k steps', categoryId: 'c_move', color: 'moss', targetEnabled: true, targetCompletions: 6, targetPeriodDays: 7, freq: 0.78 },
-    { id: 'i_stretch', name: 'Stretch', categoryId: 'c_move', color: 'amber', targetEnabled: false, targetCompletions: 3, targetPeriodDays: 7, freq: 0.4 },
-    { id: 'i_med', name: 'Meditate', categoryId: 'c_mind', color: 'teal', targetEnabled: true, targetCompletions: 5, targetPeriodDays: 7, freq: 0.6 },
-    { id: 'i_read', name: 'Read 20 min', categoryId: 'c_mind', color: 'blue', targetEnabled: true, targetCompletions: 4, targetPeriodDays: 7, freq: 0.5 },
-    { id: 'i_phone', name: 'No phone in bed', categoryId: 'c_mind', color: 'plum', targetEnabled: false, targetCompletions: 5, targetPeriodDays: 7, freq: 0.45 },
-    { id: 'i_invest', name: 'Invest', categoryId: 'c_money', color: 'sage', targetEnabled: true, targetCompletions: 1, targetPeriodDays: 30, freq: 0.16 },
-    { id: 'i_nospend', name: 'No-spend day', categoryId: 'c_money', color: 'rose', targetEnabled: true, targetCompletions: 3, targetPeriodDays: 7, freq: 0.42 },
-    { id: 'i_call', name: 'Call someone', categoryId: 'c_connect', color: 'amber', targetEnabled: false, targetCompletions: 2, targetPeriodDays: 7, freq: 0.3 },
+    {
+      id: 'i_work',
+      name: 'Workout',
+      categoryId: 'c_move',
+      color: 'clay',
+      targetEnabled: true,
+      targetCompletions: 4,
+      targetPeriodDays: 7,
+      freq: 0.55,
+    },
+    {
+      id: 'i_walk',
+      name: 'Walk 8k steps',
+      categoryId: 'c_move',
+      color: 'moss',
+      targetEnabled: true,
+      targetCompletions: 6,
+      targetPeriodDays: 7,
+      freq: 0.78,
+    },
+    {
+      id: 'i_stretch',
+      name: 'Stretch',
+      categoryId: 'c_move',
+      color: 'amber',
+      targetEnabled: false,
+      targetCompletions: 3,
+      targetPeriodDays: 7,
+      freq: 0.4,
+    },
+    {
+      id: 'i_med',
+      name: 'Meditate',
+      categoryId: 'c_mind',
+      color: 'teal',
+      targetEnabled: true,
+      targetCompletions: 5,
+      targetPeriodDays: 7,
+      freq: 0.6,
+    },
+    {
+      id: 'i_read',
+      name: 'Read 20 min',
+      categoryId: 'c_mind',
+      color: 'blue',
+      targetEnabled: true,
+      targetCompletions: 4,
+      targetPeriodDays: 7,
+      freq: 0.5,
+    },
+    {
+      id: 'i_phone',
+      name: 'No phone in bed',
+      categoryId: 'c_mind',
+      color: 'plum',
+      targetEnabled: false,
+      targetCompletions: 5,
+      targetPeriodDays: 7,
+      freq: 0.45,
+    },
+    {
+      id: 'i_invest',
+      name: 'Invest',
+      categoryId: 'c_money',
+      color: 'sage',
+      targetEnabled: true,
+      targetCompletions: 1,
+      targetPeriodDays: 30,
+      freq: 0.16,
+    },
+    {
+      id: 'i_nospend',
+      name: 'No-spend day',
+      categoryId: 'c_money',
+      color: 'rose',
+      targetEnabled: true,
+      targetCompletions: 3,
+      targetPeriodDays: 7,
+      freq: 0.42,
+    },
+    {
+      id: 'i_call',
+      name: 'Call someone',
+      categoryId: 'c_connect',
+      color: 'amber',
+      targetEnabled: false,
+      targetCompletions: 2,
+      targetPeriodDays: 7,
+      freq: 0.3,
+    },
   ];
 
   const completions: Completions = {}; // intentionId -> map of dateKey:true
@@ -162,31 +272,41 @@ let state: AppState | null = null;
 function persistCategories(): Promise<unknown> {
   const s = load();
   const rows: CategoryRow[] = s.categories.map((c, i) => ({ ...c, order: i }));
-  return enqueue(() => db.transaction('rw', db.categories, async () => {
-    await db.categories.clear();
-    if (rows.length) await db.categories.bulkPut(rows);
-  }));
+  return enqueue(() =>
+    db.transaction('rw', db.categories, async () => {
+      await db.categories.clear();
+      if (rows.length) await db.categories.bulkPut(rows);
+    }),
+  );
 }
 function persistIntentions(): Promise<unknown> {
   const s = load();
   const rows: IntentionRow[] = s.intentions.map((it, i) => ({ ...it, order: i }));
-  return enqueue(() => db.transaction('rw', db.intentions, async () => {
-    await db.intentions.clear();
-    if (rows.length) await db.intentions.bulkPut(rows);
-  }));
+  return enqueue(() =>
+    db.transaction('rw', db.intentions, async () => {
+      await db.intentions.clear();
+      if (rows.length) await db.intentions.bulkPut(rows);
+    }),
+  );
 }
 function persistAll(): Promise<unknown> {
   const s = load();
   const comp: CompletionRow[] = [];
   Object.entries(s.completions).forEach(([iid, m]) => {
-    Object.keys(m).forEach((dk) => { if (m[dk]) comp.push({ key: `${iid}|${dk}`, intentionId: iid, dateKey: dk }); });
+    Object.keys(m).forEach((dk) => {
+      if (m[dk]) comp.push({ key: `${iid}|${dk}`, intentionId: iid, dateKey: dk });
+    });
   });
-  return enqueue(() => db.transaction('rw', db.categories, db.intentions, db.completions, async () => {
-    await Promise.all([db.categories.clear(), db.intentions.clear(), db.completions.clear()]);
-    if (s.categories.length) await db.categories.bulkPut(s.categories.map((c, i) => ({ ...c, order: i })));
-    if (s.intentions.length) await db.intentions.bulkPut(s.intentions.map((it, i) => ({ ...it, order: i })));
-    if (comp.length) await db.completions.bulkPut(comp);
-  }));
+  return enqueue(() =>
+    db.transaction('rw', db.categories, db.intentions, db.completions, async () => {
+      await Promise.all([db.categories.clear(), db.intentions.clear(), db.completions.clear()]);
+      if (s.categories.length)
+        await db.categories.bulkPut(s.categories.map((c, i) => ({ ...c, order: i })));
+      if (s.intentions.length)
+        await db.intentions.bulkPut(s.intentions.map((it, i) => ({ ...it, order: i })));
+      if (comp.length) await db.completions.bulkPut(comp);
+    }),
+  );
 }
 
 function emptyState(): AppState {
@@ -230,7 +350,9 @@ function effectiveSource(): DataSource {
 async function hydrate(src: DataSource): Promise<AppState> {
   await db.open();
   const [cats, ints, comps] = await Promise.all([
-    db.categories.toArray(), db.intentions.toArray(), db.completions.toArray(),
+    db.categories.toArray(),
+    db.intentions.toArray(),
+    db.completions.toArray(),
   ]);
 
   if (cats.length === 0 && ints.length === 0) {
@@ -242,7 +364,9 @@ async function hydrate(src: DataSource): Promise<AppState> {
   cats.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   ints.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const completions: Completions = {};
-  comps.forEach((r) => { (completions[r.intentionId] = completions[r.intentionId] || {})[r.dateKey] = true; });
+  comps.forEach((r) => {
+    (completions[r.intentionId] = completions[r.intentionId] || {})[r.dateKey] = true;
+  });
 
   state = {
     version: 1,
@@ -259,11 +383,16 @@ async function hydrate(src: DataSource): Promise<AppState> {
 async function maybeMigrateLegacy(): Promise<void> {
   if (localStorage.getItem(MIGRATED_KEY)) return;
   try {
-    if (!(await Dexie.exists(LEGACY_DB))) { localStorage.setItem(MIGRATED_KEY, '1'); return; }
+    if (!(await Dexie.exists(LEGACY_DB))) {
+      localStorage.setItem(MIGRATED_KEY, '1');
+      return;
+    }
     const legacy = new IntentionHorizonDB(LEGACY_DB);
     await legacy.open();
     const [cats, ints, comps] = await Promise.all([
-      legacy.categories.toArray(), legacy.intentions.toArray(), legacy.completions.toArray(),
+      legacy.categories.toArray(),
+      legacy.intentions.toArray(),
+      legacy.completions.toArray(),
     ]);
     if (cats.length === 0 && ints.length === 0) {
       legacy.close();
@@ -284,7 +413,9 @@ async function maybeMigrateLegacy(): Promise<void> {
     legacy.close();
     setDataSource('real');
     localStorage.setItem(MIGRATED_KEY, '1');
-  } catch { /* migration is best-effort; never block startup */ }
+  } catch {
+    /* migration is best-effort; never block startup */
+  }
 }
 
 // ── e2e test seed (dev builds only) ──
@@ -321,7 +452,9 @@ async function maybeSeedForE2E(): Promise<AppState | null> {
   const t = today();
   Object.entries(spec.completionsByOffset || {}).forEach(([iid, offsets]) => {
     const m: Record<string, boolean> = {};
-    offsets.forEach((o) => { m[dateKey(addDays(t, -o))] = true; });
+    offsets.forEach((o) => {
+      m[dateKey(addDays(t, -o))] = true;
+    });
     completions[iid] = m;
   });
 
@@ -353,7 +486,9 @@ export function load(): AppState {
 export async function switchDataSource(src: DataSource): Promise<AppState> {
   if (src === 'mock' && !mockEnabled()) return load(); // mock gated off: refuse
   if (src === currentSource && state) return state;
-  await writeQ.catch(() => { /* drained */ });
+  await writeQ.catch(() => {
+    /* drained */
+  });
   db.close();
   setDataSource(src);
   currentSource = src;
@@ -377,22 +512,38 @@ export function toggleCompletion(intentionId: string, key: string): void {
   if (!s.completions[intentionId]) s.completions[intentionId] = {};
   const m = s.completions[intentionId];
   const now = !m[key];
-  if (m[key]) delete m[key]; else m[key] = true;
+  if (m[key]) delete m[key];
+  else m[key] = true;
   const rowKey = `${intentionId}|${key}`;
-  enqueue(() => (now ? db.completions.put({ key: rowKey, intentionId, dateKey: key }) : db.completions.delete(rowKey)));
+  enqueue(() =>
+    now
+      ? db.completions.put({ key: rowKey, intentionId, dateKey: key })
+      : db.completions.delete(rowKey),
+  );
 }
 export function isDone(intentionId: string, key: string): boolean {
   const s = load();
   return !!(s.completions[intentionId] && s.completions[intentionId][key]);
 }
 
-export function addCategory(name: string): void { const s = load(); s.categories.push({ id: uid('c'), name }); persistCategories(); }
-export function updateCategory(id: string, name: string): void { const s = load(); const c = s.categories.find((c) => c.id === id); if (c) c.name = name; persistCategories(); }
+export function addCategory(name: string): void {
+  const s = load();
+  s.categories.push({ id: uid('c'), name });
+  persistCategories();
+}
+export function updateCategory(id: string, name: string): void {
+  const s = load();
+  const c = s.categories.find((c) => c.id === id);
+  if (c) c.name = name;
+  persistCategories();
+}
 export function deleteCategory(id: string): void {
   const s = load();
   s.categories = s.categories.filter((c) => c.id !== id);
   // orphaned intentions move to no category
-  s.intentions.forEach((it) => { if (it.categoryId === id) it.categoryId = null; });
+  s.intentions.forEach((it) => {
+    if (it.categoryId === id) it.categoryId = null;
+  });
   persistCategories();
   persistIntentions();
 }
@@ -400,13 +551,22 @@ export function deleteCategory(id: string): void {
 export function addIntention(data: IntentionInput): void {
   const s = load();
   s.intentions.push({
-    id: uid('i'), name: data.name, categoryId: data.categoryId || null,
-    color: data.color || 'clay', targetEnabled: !!data.targetEnabled,
-    targetCompletions: data.targetCompletions ?? 3, targetPeriodDays: data.targetPeriodDays ?? 7,
+    id: uid('i'),
+    name: data.name,
+    categoryId: data.categoryId || null,
+    color: data.color || 'clay',
+    targetEnabled: !!data.targetEnabled,
+    targetCompletions: data.targetCompletions ?? 3,
+    targetPeriodDays: data.targetPeriodDays ?? 7,
   });
   persistIntentions();
 }
-export function updateIntention(id: string, data: Partial<Intention>): void { const s = load(); const it = s.intentions.find((i) => i.id === id); if (it) Object.assign(it, data); persistIntentions(); }
+export function updateIntention(id: string, data: Partial<Intention>): void {
+  const s = load();
+  const it = s.intentions.find((i) => i.id === id);
+  if (it) Object.assign(it, data);
+  persistIntentions();
+}
 export function deleteIntention(id: string): void {
   const s = load();
   s.intentions = s.intentions.filter((i) => i.id !== id);
@@ -419,9 +579,13 @@ export function deleteIntention(id: string): void {
 export function reorderIntentions(categoryKey: string, orderedIds: string[]): void {
   const s = load();
   const slots: number[] = [];
-  s.intentions.forEach((it, idx) => { if ((it.categoryId || '_none') === categoryKey) slots.push(idx); });
+  s.intentions.forEach((it, idx) => {
+    if ((it.categoryId || '_none') === categoryKey) slots.push(idx);
+  });
   const byId: Record<string, Intention> = Object.fromEntries(s.intentions.map((it) => [it.id, it]));
-  orderedIds.forEach((id, i) => { if (slots[i] != null && byId[id]) s.intentions[slots[i]] = byId[id]; });
+  orderedIds.forEach((id, i) => {
+    if (slots[i] != null && byId[id]) s.intentions[slots[i]] = byId[id];
+  });
   persistIntentions();
 }
 // reorder whole categories
@@ -462,7 +626,11 @@ export function doneOnDay(key: string): Intention[] {
 function completedDateKeys(): string[] {
   const s = load();
   const keys = new Set<string>();
-  Object.values(s.completions).forEach((m) => Object.keys(m).forEach((k) => { if (m[k]) keys.add(k); }));
+  Object.values(s.completions).forEach((m) =>
+    Object.keys(m).forEach((k) => {
+      if (m[k]) keys.add(k);
+    }),
+  );
   return [...keys];
 }
 
@@ -476,7 +644,7 @@ export function monthsWithData(): MonthPeriod[] {
     const pk = `${y}-${m}`;
     if (!periods.has(pk)) periods.set(pk, { year: y, month: m - 1 });
   });
-  return [...periods.values()].sort((a, b) => (b.year - a.year) || (b.month - a.month));
+  return [...periods.values()].sort((a, b) => b.year - a.year || b.month - a.month);
 }
 
 // earliest date with a recorded completion, or null if there is no data at all
@@ -512,13 +680,17 @@ export function dayMetric(date: Date, filterIntentionId: string | null): DayMetr
     const c = windowCount(it.id, date, it.targetPeriodDays);
     if (c >= it.targetCompletions) met++;
   });
-  const metRatio = targeted.length ? met / targeted.length : (count > 0 ? 1 : 0);
+  const metRatio = targeted.length ? met / targeted.length : count > 0 ? 1 : 0;
   return { count, met, metRatio, targetedTotal: targeted.length };
 }
 
 export type AggregateBucket = { label: string; value: number };
 // aggregate totals over a range grouped by day/month/year
-export function aggregate(filterIntentionId: string | null, grouping: Grouping, rangeDays: number): AggregateBucket[] {
+export function aggregate(
+  filterIntentionId: string | null,
+  grouping: Grouping,
+  rangeDays: number,
+): AggregateBucket[] {
   const s = load();
   const t = today();
   let pool = s.intentions;
@@ -532,8 +704,13 @@ export function aggregate(filterIntentionId: string | null, grouping: Grouping, 
     if (grouping === 'day') label = `${MONTHS[d.getMonth()]} ${d.getDate()}`;
     else if (grouping === 'month') label = `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
     else label = `${d.getFullYear()}`;
-    if (!(label in buckets)) { buckets[label] = 0; order.push(label); }
-    pool.forEach((it) => { if (s.completions[it.id] && s.completions[it.id][k]) buckets[label]++; });
+    if (!(label in buckets)) {
+      buckets[label] = 0;
+      order.push(label);
+    }
+    pool.forEach((it) => {
+      if (s.completions[it.id] && s.completions[it.id][k]) buckets[label]++;
+    });
   }
   return order.map((l) => ({ label: l, value: buckets[l] }));
 }
@@ -549,17 +726,32 @@ export function streaks(filterId: string | null): Streaks {
   const t = today();
   let current = 0;
   const off = dayMet(dateKey(t), filterId) ? 0 : 1; // grace for today-not-yet-logged
-  for (let i = off; i < 400; i++) { if (dayMet(dateKey(addDays(t, -i)), filterId)) current++; else break; }
-  let best = 0, run = 0;
-  for (let i = 199; i >= 0; i--) { if (dayMet(dateKey(addDays(t, -i)), filterId)) { run++; if (run > best) best = run; } else run = 0; }
-  let met30 = 0; for (let i = 0; i < 30; i++) { if (dayMet(dateKey(addDays(t, -i)), filterId)) met30++; }
+  for (let i = off; i < 400; i++) {
+    if (dayMet(dateKey(addDays(t, -i)), filterId)) current++;
+    else break;
+  }
+  let best = 0,
+    run = 0;
+  for (let i = 199; i >= 0; i--) {
+    if (dayMet(dateKey(addDays(t, -i)), filterId)) {
+      run++;
+      if (run > best) best = run;
+    } else run = 0;
+  }
+  let met30 = 0;
+  for (let i = 0; i < 30; i++) {
+    if (dayMet(dateKey(addDays(t, -i)), filterId)) met30++;
+  }
   return { current, best, rate: Math.round((met30 / 30) * 100) };
 }
 
 // CSV: long format date,category,intention,completed(1)
 export function toCSV(): string {
   const s = load();
-  const catName = (id: string | null): string => { const c = s.categories.find((c) => c.id === id); return c ? c.name : ''; };
+  const catName = (id: string | null): string => {
+    const c = s.categories.find((c) => c.id === id);
+    return c ? c.name : '';
+  };
   const rows: string[][] = [['date', 'category', 'intention', 'completed']];
   const t = today();
   // emit a full grid for last 90 days for completeness
@@ -571,10 +763,16 @@ export function toCSV(): string {
       if (done) rows.push([k, catName(it.categoryId), it.name, '1']);
     });
   }
-  return rows.map((r) => r.map((field) => {
-    const str = String(field);
-    return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
-  }).join(',')).join('\n');
+  return rows
+    .map((r) =>
+      r
+        .map((field) => {
+          const str = String(field);
+          return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+        })
+        .join(','),
+    )
+    .join('\n');
 }
 
 export function downloadCSV(): void {
@@ -629,15 +827,35 @@ function parseCSVGrid(text: string): string[][] {
     const ch = text[i];
     if (inQuotes) {
       if (ch === '"') {
-        if (text[i + 1] === '"') { field += '"'; i++; } else inQuotes = false;
+        if (text[i + 1] === '"') {
+          field += '"';
+          i++;
+        } else inQuotes = false;
       } else field += ch;
-    } else if (ch === '"') { inQuotes = true; started = true; }
-    else if (ch === ',') { row.push(field); field = ''; started = true; }
-    else if (ch === '\n') { row.push(field); rows.push(row); row = []; field = ''; started = false; }
-    else if (ch === '\r') { /* swallow CR (CRLF) */ }
-    else { field += ch; started = true; }
+    } else if (ch === '"') {
+      inQuotes = true;
+      started = true;
+    } else if (ch === ',') {
+      row.push(field);
+      field = '';
+      started = true;
+    } else if (ch === '\n') {
+      row.push(field);
+      rows.push(row);
+      row = [];
+      field = '';
+      started = false;
+    } else if (ch === '\r') {
+      /* swallow CR (CRLF) */
+    } else {
+      field += ch;
+      started = true;
+    }
   }
-  if (started || field !== '' || row.length) { row.push(field); rows.push(row); }
+  if (started || field !== '' || row.length) {
+    row.push(field);
+    rows.push(row);
+  }
   return rows;
 }
 
@@ -661,9 +879,19 @@ export function parseCSV(text: string): ParseResult {
     if (g.every((c) => c.trim() === '')) continue; // blank line
     const date = (g[idx.date] ?? '').trim();
     const completed = (g[idx.completed] ?? '').trim().toLowerCase();
-    if (!isValidDateKey(date)) { skipped++; continue; }
-    if (!completed || completed === '0' || completed === 'false') { skipped++; continue; }
-    rows.push({ date, category: (g[idx.category] ?? '').trim(), intention: (g[idx.intention] ?? '').trim() });
+    if (!isValidDateKey(date)) {
+      skipped++;
+      continue;
+    }
+    if (!completed || completed === '0' || completed === 'false') {
+      skipped++;
+      continue;
+    }
+    rows.push({
+      date,
+      category: (g[idx.category] ?? '').trim(),
+      intention: (g[idx.intention] ?? '').trim(),
+    });
   }
   return { rows, skipped };
 }
@@ -673,7 +901,13 @@ export function parseCSV(text: string): ParseResult {
 // is the cache swapped and persisted (persistAll writes all tables atomically).
 // Merge is by trimmed, case-insensitive name; completed days are unioned.
 export function importCSV(text: string): ImportResult {
-  const empty: ImportResult = { ok: false, categoriesAdded: 0, intentionsAdded: 0, daysAdded: 0, rowsSkipped: 0 };
+  const empty: ImportResult = {
+    ok: false,
+    categoriesAdded: 0,
+    intentionsAdded: 0,
+    daysAdded: 0,
+    rowsSkipped: 0,
+  };
   const parsed = parseCSV(text);
   if (parsed.error) return { ...empty, error: parsed.error };
 
@@ -681,16 +915,21 @@ export function importCSV(text: string): ImportResult {
   const categories: Category[] = s.categories.map((c) => ({ ...c }));
   const intentions: Intention[] = s.intentions.map((it) => ({ ...it }));
   const completions: Completions = {};
-  Object.entries(s.completions).forEach(([iid, m]) => { completions[iid] = { ...m }; });
+  Object.entries(s.completions).forEach(([iid, m]) => {
+    completions[iid] = { ...m };
+  });
 
   const norm = (x: string): string => x.trim().toLowerCase();
   const catByName = new Map<string, Category>();
   categories.forEach((c) => catByName.set(norm(c.name), c));
-  const intKey = (catId: string | null, name: string): string => `${catId ?? '_none'}|${norm(name)}`;
+  const intKey = (catId: string | null, name: string): string =>
+    `${catId ?? '_none'}|${norm(name)}`;
   const intByKey = new Map<string, Intention>();
   intentions.forEach((it) => intByKey.set(intKey(it.categoryId, it.name), it));
 
-  let categoriesAdded = 0, intentionsAdded = 0, daysAdded = 0;
+  let categoriesAdded = 0,
+    intentionsAdded = 0,
+    daysAdded = 0;
   let colorCursor = intentions.length; // round-robin palette for new intentions
 
   for (const row of parsed.rows) {
@@ -710,16 +949,23 @@ export function importCSV(text: string): ImportResult {
     let it = intByKey.get(key);
     if (!it) {
       it = {
-        id: uid('i'), name: row.intention, categoryId: catId,
+        id: uid('i'),
+        name: row.intention,
+        categoryId: catId,
         color: PALETTE[colorCursor++ % PALETTE.length].id,
-        targetEnabled: false, targetCompletions: 3, targetPeriodDays: 7,
+        targetEnabled: false,
+        targetCompletions: 3,
+        targetPeriodDays: 7,
       };
       intentions.push(it);
       intByKey.set(key, it);
       intentionsAdded++;
     }
     if (!completions[it.id]) completions[it.id] = {};
-    if (!completions[it.id][row.date]) { completions[it.id][row.date] = true; daysAdded++; }
+    if (!completions[it.id][row.date]) {
+      completions[it.id][row.date] = true;
+      daysAdded++;
+    }
   }
 
   state = { version: 1, categories, intentions, completions };

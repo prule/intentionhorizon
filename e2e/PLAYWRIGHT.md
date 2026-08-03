@@ -28,19 +28,19 @@ export default defineConfig<SerenityFixtures, SerenityWorkerFixtures>({ ... });
 
 Every setting in `playwright.config.ts`, and why it's set:
 
-| Setting | Value | Why |
-|---------|-------|-----|
-| `testDir` | `./e2e/specs` | Only files under `specs/` are tests. `tasks.ts`, `questions.ts`, etc. are imported, never run directly. |
-| `fullyParallel` | `true` | Each test gets its own browser context, so they can't interfere. Targeting one test (`-g`, or a path) removes parallelism. |
-| `forbidOnly` | `true` in CI | A stray `it.only` fails the CI run instead of silently skipping the rest. |
-| `retries` | `2` in CI, `0` local | Absorbs flake in CI; locally a failure fails immediately so you see it. |
-| `reporter` | Serenity + list/html | See **Reporting** below. |
-| `use.baseURL` | `http://localhost:5173` | `Navigate.to('/')` resolves against this. Matches the Vite dev server port. |
-| `use.trace` | `on-first-retry` | First retry records a trace; open with `npx playwright show-trace`. Zero cost on passing runs. |
-| `use.defaultActorName` | `Tess` | The name Serenity gives the actor injected via the `actor` fixture. |
-| `use.crew` | `Photographer` | Worker-process crew; screenshots on failure (or every step with `PHOTOS=all`). |
-| `projects` | `chromium` only | One browser. Add entries here to run Firefox/WebKit. |
-| `webServer` | `npm run dev` | See **Dev server** below. |
+| Setting                | Value                   | Why                                                                                                                        |
+| ---------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `testDir`              | `./e2e/specs`           | Only files under `specs/` are tests. `tasks.ts`, `questions.ts`, etc. are imported, never run directly.                    |
+| `fullyParallel`        | `true`                  | Each test gets its own browser context, so they can't interfere. Targeting one test (`-g`, or a path) removes parallelism. |
+| `forbidOnly`           | `true` in CI            | A stray `it.only` fails the CI run instead of silently skipping the rest.                                                  |
+| `retries`              | `2` in CI, `0` local    | Absorbs flake in CI; locally a failure fails immediately so you see it.                                                    |
+| `reporter`             | Serenity + list/html    | See **Reporting** below.                                                                                                   |
+| `use.baseURL`          | `http://localhost:5173` | `Navigate.to('/')` resolves against this. Matches the Vite dev server port.                                                |
+| `use.trace`            | `on-first-retry`        | First retry records a trace; open with `npx playwright show-trace`. Zero cost on passing runs.                             |
+| `use.defaultActorName` | `Tess`                  | The name Serenity gives the actor injected via the `actor` fixture.                                                        |
+| `use.crew`             | `Photographer`          | Worker-process crew; screenshots on failure (or every step with `PHOTOS=all`).                                             |
+| `projects`             | `chromium` only         | One browser. Add entries here to run Firefox/WebKit.                                                                       |
+| `webServer`            | `npm run dev`           | See **Dev server** below.                                                                                                  |
 
 ## Reporting
 
@@ -108,13 +108,13 @@ actor side.
 
 ## Scripts
 
-| Script | Command | Use |
-|--------|---------|-----|
-| `npm run e2e` | `playwright test` | Headless, all specs. |
-| `npm run e2e:headed` | `playwright test --headed` | Visible browser. |
-| `npm run e2e:debug` | `playwright test --debug` | Playwright Inspector, step through. |
-| `npm run e2e:report` | `playwright test; serenity-bdd run ...` | Run, then render the Serenity BDD HTML report (chained with `;` so it renders even on failure). |
-| `npm run serenity-bdd:update` | `serenity-bdd update` | One-off: download the report CLI jar (needs Java 11+). |
+| Script                        | Command                                 | Use                                                                                             |
+| ----------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `npm run e2e`                 | `playwright test`                       | Headless, all specs.                                                                            |
+| `npm run e2e:headed`          | `playwright test --headed`              | Visible browser.                                                                                |
+| `npm run e2e:debug`           | `playwright test --debug`               | Playwright Inspector, step through.                                                             |
+| `npm run e2e:report`          | `playwright test; serenity-bdd run ...` | Run, then render the Serenity BDD HTML report (chained with `;` so it renders even on failure). |
+| `npm run serenity-bdd:update` | `serenity-bdd update`                   | One-off: download the report CLI jar (needs Java 11+).                                          |
 
 Anything after `--` forwards to `playwright test` — see README.md for targeting
 recipes.

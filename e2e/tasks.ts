@@ -1,7 +1,14 @@
 import { Task, Wait } from '@serenity-js/core';
 import { Click, Enter, isVisible, Navigate } from '@serenity-js/web';
 import { not } from '@serenity-js/assertions';
-import { byTestId, categoryEditButton, filterChip, intentionRow, monthPickerOption, settingsRow } from './elements';
+import {
+  byTestId,
+  categoryEditButton,
+  filterChip,
+  intentionRow,
+  monthPickerOption,
+  settingsRow,
+} from './elements';
 
 /** Map of tab id -> the screen testid that proves the tab has rendered. */
 const SCREEN: Record<string, string> = {
@@ -17,7 +24,8 @@ const categoryField = byTestId('category-name');
 /** Open the app at the Journal screen and wait for it to render. */
 export const OpenTheApp = {
   fresh: (): Task =>
-    Task.where('#actor opens the app',
+    Task.where(
+      '#actor opens the app',
       Navigate.to('/'),
       Wait.until(byTestId('screen-entry'), isVisible()),
     ),
@@ -26,7 +34,8 @@ export const OpenTheApp = {
 /** Reload the page and wait for the Journal screen to come back. */
 export const ReloadTheApp = {
   now: (): Task =>
-    Task.where('#actor reloads the app',
+    Task.where(
+      '#actor reloads the app',
       Navigate.reloadPage(),
       Wait.until(byTestId('screen-entry'), isVisible()),
     ),
@@ -35,7 +44,8 @@ export const ReloadTheApp = {
 /** Navigate to a top-level tab by its internal id (entry | analytics | settings). */
 export const GoToTab = {
   to: (tabId: 'entry' | 'analytics' | 'settings'): Task =>
-    Task.where(`#actor goes to the ${tabId} tab`,
+    Task.where(
+      `#actor goes to the ${tabId} tab`,
       Click.on(byTestId(`tab-${tabId}`)),
       Wait.until(byTestId(SCREEN[tabId]), isVisible()),
     ),
@@ -45,10 +55,8 @@ export const GoToTab = {
 export const NavigateDay = {
   previous: (): Task =>
     Task.where('#actor goes to the previous day', Click.on(byTestId('date-prev'))),
-  next: (): Task =>
-    Task.where('#actor goes to the next day', Click.on(byTestId('date-next'))),
-  toToday: (): Task =>
-    Task.where('#actor returns to today', Click.on(byTestId('date-today'))),
+  next: (): Task => Task.where('#actor goes to the next day', Click.on(byTestId('date-next'))),
+  toToday: (): Task => Task.where('#actor returns to today', Click.on(byTestId('date-today'))),
 };
 
 /** Open the Journal screen's jump-to-month picker dialog. */
@@ -66,7 +74,8 @@ export const PickMonth = {
 /** Toggle an intention's completion for the currently shown day. */
 export const LogIntention = {
   named: (name: string): Task =>
-    Task.where(`#actor logs "${name}"`,
+    Task.where(
+      `#actor logs "${name}"`,
       Click.on(byTestId('intention-toggle').of(intentionRow(name))),
     ),
 };
@@ -74,7 +83,8 @@ export const LogIntention = {
 /** Create a new intention with the given name via the Manage screen. */
 export const AddIntention = {
   named: (name: string): Task =>
-    Task.where(`#actor adds the intention "${name}"`,
+    Task.where(
+      `#actor adds the intention "${name}"`,
       Click.on(byTestId('add-intention')),
       Enter.theValue(name).into(nameField),
       Click.on(byTestId('save-intention')),
@@ -86,7 +96,8 @@ export const AddIntention = {
 export const EditIntention = {
   rename: (from: string): { to(to: string): Task } => ({
     to: (to: string): Task =>
-      Task.where(`#actor renames "${from}" to "${to}"`,
+      Task.where(
+        `#actor renames "${from}" to "${to}"`,
         Click.on(settingsRow(from)),
         Enter.theValue(to).into(nameField),
         Click.on(byTestId('save-intention')),
@@ -98,7 +109,8 @@ export const EditIntention = {
 /** Delete an existing intention via the Manage screen. */
 export const DeleteIntention = {
   named: (name: string): Task =>
-    Task.where(`#actor deletes the intention "${name}"`,
+    Task.where(
+      `#actor deletes the intention "${name}"`,
       Click.on(settingsRow(name)),
       Click.on(byTestId('delete-intention')),
       Wait.until(nameField, not(isVisible())),
@@ -117,9 +129,11 @@ const addIntentionWithTarget = (name: string, completions: number, periodDays: n
   const delta = completions - TARGET_DEFAULT_COMPLETIONS;
   const stepButton = delta >= 0 ? 'target-completions-inc' : 'target-completions-dec';
   const steps = Array.from({ length: Math.abs(delta) }, () => Click.on(byTestId(stepButton)));
-  const periodSteps = periodDays === 7 ? [] : [Enter.theValue(String(periodDays)).into(byTestId('target-period'))];
+  const periodSteps =
+    periodDays === 7 ? [] : [Enter.theValue(String(periodDays)).into(byTestId('target-period'))];
 
-  return Task.where(`#actor adds "${name}" with a target of ${completions} within ${periodDays} days`,
+  return Task.where(
+    `#actor adds "${name}" with a target of ${completions} within ${periodDays} days`,
     Click.on(byTestId('add-intention')),
     Enter.theValue(name).into(nameField),
     Click.on(byTestId('targets-switch')),
@@ -146,7 +160,8 @@ export const AddIntentionWithTarget = {
 /** Create a new category via the Manage screen. */
 export const AddCategory = {
   named: (name: string): Task =>
-    Task.where(`#actor adds the category "${name}"`,
+    Task.where(
+      `#actor adds the category "${name}"`,
       Click.on(byTestId('add-category')),
       Enter.theValue(name).into(categoryField),
       Click.on(byTestId('save-category')),
@@ -158,7 +173,8 @@ export const AddCategory = {
 export const RenameCategory = {
   rename: (from: string): { to(to: string): Task } => ({
     to: (to: string): Task =>
-      Task.where(`#actor renames category "${from}" to "${to}"`,
+      Task.where(
+        `#actor renames category "${from}" to "${to}"`,
         Click.on(categoryEditButton(from)),
         Enter.theValue(to).into(categoryField),
         Click.on(byTestId('save-category')),
@@ -170,7 +186,8 @@ export const RenameCategory = {
 /** Delete an existing category via the Manage screen. */
 export const DeleteCategory = {
   named: (name: string): Task =>
-    Task.where(`#actor deletes the category "${name}"`,
+    Task.where(
+      `#actor deletes the category "${name}"`,
       Click.on(categoryEditButton(name)),
       Click.on(byTestId('delete-category')),
       Wait.until(categoryField, not(isVisible())),
@@ -181,6 +198,5 @@ export const DeleteCategory = {
 export const FilterInsightsBy = {
   intention: (name: string): Task =>
     Task.where(`#actor filters Insights by "${name}"`, Click.on(filterChip(name))),
-  all: (): Task =>
-    Task.where('#actor clears the Insights filter', Click.on(filterChip('All'))),
+  all: (): Task => Task.where('#actor clears the Insights filter', Click.on(filterChip('All'))),
 };
