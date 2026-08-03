@@ -1,6 +1,6 @@
 import { Question } from '@serenity-js/core';
 import { Attribute, Page, Text } from '@serenity-js/web';
-import { byTestId, categorySections, intentionRow, intentionRows, targetBadge } from './elements';
+import { byTestId, categorySections, intentionRow, intentionRows, monthPickerOptions, targetBadge } from './elements';
 
 /** The active tab as reflected in the URL hash slug (journal | insights | manage). */
 export const ActiveTab = {
@@ -14,6 +14,7 @@ export const ActiveTab = {
 /** The human-readable label shown by the Journal screen's date navigator. */
 export const VisibleDate = {
   label: () => Text.of(byTestId('date-label')).describedAs('the visible date'),
+  key: () => Attribute.called('data-date-key').of(byTestId('date-label')).describedAs('the visible date key'),
 };
 
 /** Whether an intention is marked complete for the currently shown day. */
@@ -50,6 +51,18 @@ export const ReturnToToday = {
   isShown: () =>
     Question.about('whether the return-to-today control is shown', async (actor) =>
       (await byTestId('date-today').answeredBy(actor)).isPresent(),
+    ),
+};
+
+/** Whether the Journal screen's jump-to-month control is currently shown. */
+export const MonthPicker = {
+  isAvailable: () =>
+    Question.about('whether the jump-to-month control is shown', async (actor) =>
+      (await byTestId('date-jump').answeredBy(actor)).isPresent(),
+    ),
+  labels: () =>
+    Question.about('the labels listed in the jump-to-month picker', (actor) =>
+      actor.answer(monthPickerOptions().eachMappedTo(Attribute.called('data-period-label'))),
     ),
 };
 

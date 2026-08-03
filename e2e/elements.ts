@@ -44,3 +44,12 @@ export const filterChip = (label: string) =>
 export const targetBadge = (name: string) =>
   PageElements.located(By.css(`[data-testid="target-badge"][data-intention-name="${name}"]`))
     .describedAs(`the target badge for "${name}"`);
+
+/** All entries in the Journal's jump-to-month picker dialog. */
+export const monthPickerOptions = () =>
+  PageElements.located(By.css('[data-testid="month-picker-option"]')).describedAs('the month picker options');
+
+/** A single entry in the jump-to-month picker, keyed by its "MMM YYYY" label. */
+export const monthPickerOption = (label: string) =>
+  PageElement.located(By.css(`[data-testid="month-picker-option"][data-period-label="${label}"]`))
+    .describedAs(`the "${label}" month picker option`);

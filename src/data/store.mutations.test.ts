@@ -6,6 +6,7 @@ import {
   toggleCompletion, isDone, reorderIntentions, reorderCategories,
   doneOnDay, dayMet, dayMetric, aggregate, streaks, fmtDay,
   getDataSource, setDataSource,
+  monthsWithData, earliestCompletionDate, latestCompletionInMonth,
   dateKey, addDays, today,
   type IntentionInput,
 } from './store';
@@ -161,6 +162,50 @@ describe('analytics', () => {
     const read = byName('Read').id;
     [1, 2, 3].forEach((o) => toggleCompletion(read, dateKey(addDays(today(), -o)))); // not today
     expect(streaks(read).current).toBe(3);
+  });
+});
+
+describe('month/date availability', () => {
+  it('reports no months, no earliest date, and no month data when there are no completions', () => {
+    expect(monthsWithData()).toEqual([]);
+    expect(earliestCompletionDate()).toBeNull();
+    expect(latestCompletionInMonth(2026, 0)).toBeNull();
+  });
+
+  it('finds the single month containing data', () => {
+    addIntention(input({ name: 'Read' }));
+    const id = byName('Read').id;
+    const d = new Date(2026, 2, 15); // Mar 15, 2026
+    toggleCompletion(id, dateKey(d));
+
+    expect(monthsWithData()).toEqual([{ year: 2026, month: 2 }]);
+    expect(earliestCompletionDate()).toEqual(d);
+    expect(latestCompletionInMonth(2026, 2)).toEqual(d);
+    expect(latestCompletionInMonth(2026, 3)).toBeNull(); // no data in April
+  });
+
+  it('sorts distinct months across years most-recent-first and picks the true earliest/latest', () => {
+    addIntention(input({ name: 'Read' }));
+    const id = byName('Read').id;
+    const early = new Date(2024, 11, 1);   // Dec 1, 2024
+    const mid = new Date(2025, 5, 10);     // Jun 10, 2025
+    const midLater = new Date(2025, 5, 20); // Jun 20, 2025 — same month as `mid`
+    const late = new Date(2026, 0, 3);     // Jan 3, 2026
+    [early, mid, midLater, late].forEach((d) => toggleCompletion(id, dateKey(d)));
+
+    expect(monthsWithData()).toEqual([
+      { year: 2026, month: 0 },
+      { year: 2025, month: 5 },
+      { year: 2024, month: 11 },
+    ]);
+    expect(earliestCompletionDate()).toEqual(early);
+    expect(latestCompletionInMonth(2025, 5)).toEqual(midLater);
+  });
+
+  it('does not list a month with no recorded completions', () => {
+    addIntention(input({ name: 'Read' }));
+    toggleCompletion(byName('Read').id, dateKey(new Date(2026, 4, 1)));
+    expect(monthsWithData().some((p) => p.year === 2026 && p.month === 6)).toBe(false);
   });
 });
 

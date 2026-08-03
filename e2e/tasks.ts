@@ -1,7 +1,7 @@
 import { Task, Wait } from '@serenity-js/core';
 import { Click, Enter, isVisible, Navigate } from '@serenity-js/web';
 import { not } from '@serenity-js/assertions';
-import { byTestId, categoryEditButton, filterChip, intentionRow, settingsRow } from './elements';
+import { byTestId, categoryEditButton, filterChip, intentionRow, monthPickerOption, settingsRow } from './elements';
 
 /** Map of tab id -> the screen testid that proves the tab has rendered. */
 const SCREEN: Record<string, string> = {
@@ -49,6 +49,18 @@ export const NavigateDay = {
     Task.where('#actor goes to the next day', Click.on(byTestId('date-next'))),
   toToday: (): Task =>
     Task.where('#actor returns to today', Click.on(byTestId('date-today'))),
+};
+
+/** Open the Journal screen's jump-to-month picker dialog. */
+export const OpenMonthPicker = {
+  now: (): Task =>
+    Task.where('#actor opens the jump-to-month picker', Click.on(byTestId('date-jump'))),
+};
+
+/** Pick a month/year (e.g. "Mar 2026") from the open jump-to-month picker. */
+export const PickMonth = {
+  labelled: (label: string): Task =>
+    Task.where(`#actor picks "${label}" from the month picker`, Click.on(monthPickerOption(label))),
 };
 
 /** Toggle an intention's completion for the currently shown day. */
