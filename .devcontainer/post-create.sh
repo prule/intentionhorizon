@@ -19,6 +19,23 @@ sudo mkdir -p node_modules ~/.claude ~/.config/gh ~/.cache/ms-playwright /cache/
 sudo chown -R vscode:vscode node_modules ~/.claude ~/.config/gh ~/.cache ~/.cache/ms-playwright
 sudo chown vscode:vscode /cache/pnpm-store
 
+# Claude Code keeps account/onboarding state (oauthAccount, hasCompletedOnboarding,
+# ...) in ~/.claude.json, a file that sits OUTSIDE ~/.claude/ — so the volume
+# mounted at ~/.claude doesn't cover it and it resets on every rebuild, forcing
+# a re-login even though the real OAuth token (~/.claude/.credentials.json)
+# survived fine. Keep the real file inside the volume and symlink it into
+# place every time this script runs. Prefer an existing volume copy over a
+# freshly-created plain file (the volume copy is the one worth keeping).
+claude_json_store="$HOME/.claude/.claude.json"
+if [ -e "$HOME/.claude.json" ] && [ ! -L "$HOME/.claude.json" ]; then
+  if [ ! -e "$claude_json_store" ]; then
+    mv "$HOME/.claude.json" "$claude_json_store"
+  else
+    rm -f "$HOME/.claude.json"
+  fi
+fi
+ln -sf "$claude_json_store" "$HOME/.claude.json"
+
 # Make fnm + pnpm available in this non-interactive shell (mirrors ~/.bashrc).
 export FNM_DIR="$HOME/.fnm"
 export PNPM_HOME="$HOME/.local/share/pnpm"
