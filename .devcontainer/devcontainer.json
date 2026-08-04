@@ -41,6 +41,9 @@
   //     Linux container; esbuild/Playwright etc. are platform-specific. App is
   //     at the repo root, so the target is ${containerWorkspaceFolder}.
   //   - .claude      : Claude Code credentials — no re-login on rebuild.
+  //     Claude also keeps account/onboarding state in ~/.claude.json, a file
+  //     OUTSIDE this directory that this mount can't cover; post-create.sh
+  //     symlinks it into the volume so it survives rebuilds too.
   //   - .config/gh   : GitHub CLI credentials, likewise.
   //   - /cache       : the pnpm store, shared with EVERY dev container on this
   //     machine, so a package version downloads once per machine. The source
@@ -60,9 +63,15 @@
   // (containerEnv, not remoteEnv: a Playwright that can't see this var silently
   // downloads its own copy, bypassing the volume). Opt out of OpenSpec's
   // anonymous telemetry (privacy-preserving default; also silences its notice).
+  // GH_CONFIG_DIR pins `gh`'s config to the mounted volume above: JetBrains
+  // Gateway sets XDG_CONFIG_HOME to a path on the container's ephemeral
+  // overlay (not a volume), and `gh` prefers XDG_CONFIG_HOME over its default
+  // ~/.config/gh — without this override, `gh auth login` silently writes
+  // somewhere that's wiped on every rebuild, defeating the volume mount.
   "containerEnv": {
     "PLAYWRIGHT_BROWSERS_PATH": "/home/vscode/.cache/ms-playwright",
-    "OPENSPEC_TELEMETRY": "0"
+    "OPENSPEC_TELEMETRY": "0",
+    "GH_CONFIG_DIR": "/home/vscode/.config/gh"
   },
 
   // One-time provisioning: chown the volumes, sync Node to .node-version, point
