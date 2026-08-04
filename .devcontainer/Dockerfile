@@ -25,7 +25,7 @@ ARG PNPM_VERSION=11.5.2
 # OpenSpec CLI — the committed .claude/skills/openspec-* skills require it
 # (compatibility: "Requires openspec CLI"; they call `openspec list/status/
 # archive --json`). Without it Claude falls back to hand-editing openspec/ files.
-ARG OPENSPEC_VERSION=1.6.0
+ARG OPENSPEC_VERSION=1.7.0
 
 # The base image ships a non-root `vscode` user with passwordless sudo; we build
 # the JS toolchain under that user so file ownership matches at runtime.
