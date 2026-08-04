@@ -36,6 +36,24 @@ if [ -e "$HOME/.claude.json" ] && [ ! -L "$HOME/.claude.json" ]; then
 fi
 ln -sf "$claude_json_store" "$HOME/.claude.json"
 
+# OpenSpec's global config (workflow profile, feature flags — set via
+# `openspec config profile`) has no CONFIG_DIR-style override like gh's
+# GH_CONFIG_DIR: it always follows the XDG Base Directory spec, resolving to
+# $XDG_CONFIG_HOME/openspec if set, else ~/.config/openspec. JetBrains Gateway
+# sets XDG_CONFIG_HOME to a path on the ephemeral overlay (not a volume), so
+# outside JetBrains it would land in ~/.config/openspec, itself also not
+# volume-backed today. Keep the real directory inside the persisted .claude
+# volume and symlink OpenSpec's resolved location to it every run, same trick
+# as ~/.claude.json above.
+openspec_config_real="$HOME/.claude/openspec-global-config"
+openspec_config_link="${XDG_CONFIG_HOME:-$HOME/.config}/openspec"
+mkdir -p "$openspec_config_real" "$(dirname "$openspec_config_link")"
+if [ -e "$openspec_config_link" ] && [ ! -L "$openspec_config_link" ]; then
+  find "$openspec_config_link" -mindepth 1 -maxdepth 1 -exec mv -t "$openspec_config_real" {} +
+  rmdir "$openspec_config_link"
+fi
+ln -sfn "$openspec_config_real" "$openspec_config_link"
+
 # Make fnm + pnpm available in this non-interactive shell (mirrors ~/.bashrc).
 export FNM_DIR="$HOME/.fnm"
 export PNPM_HOME="$HOME/.local/share/pnpm"

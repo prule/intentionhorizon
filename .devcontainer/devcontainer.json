@@ -43,7 +43,9 @@
   //   - .claude      : Claude Code credentials — no re-login on rebuild.
   //     Claude also keeps account/onboarding state in ~/.claude.json, a file
   //     OUTSIDE this directory that this mount can't cover; post-create.sh
-  //     symlinks it into the volume so it survives rebuilds too.
+  //     symlinks it into the volume so it survives rebuilds too. Also reused
+  //     to persist OpenSpec's global config (workflow profile) the same way,
+  //     since it has no volume-friendly location of its own.
   //   - .config/gh   : GitHub CLI credentials, likewise.
   //   - /cache       : the pnpm store, shared with EVERY dev container on this
   //     machine, so a package version downloads once per machine. The source
