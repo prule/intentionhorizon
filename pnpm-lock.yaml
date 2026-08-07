@@ -12,10 +12,10 @@ importers:
         specifier: ^4.0.10
         version: 4.4.3
       react:
-        specifier: ^18.3.1
+        specifier: 18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@playwright/test':
@@ -46,10 +46,10 @@ importers:
         specifier: ^26.1.1
         version: 26.1.1
       '@types/react':
-        specifier: ^18.3.18
+        specifier: 18.3.30
         version: 18.3.30
       '@types/react-dom':
-        specifier: ^18.3.5
+        specifier: 18.3.7
         version: 18.3.7(@types/react@18.3.30)
       '@vitejs/plugin-react':
         specifier: ^4.3.4
@@ -3524,7 +3524,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.9
       estree-walker: 2.0.2
-      picomatch: 4.0.4
+      picomatch: 4.0.5
     optionalDependencies:
       rollup: 4.61.0
 
