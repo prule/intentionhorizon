@@ -23,13 +23,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.1.0
 
       # pnpm must be on PATH before setup-node so its `cache: pnpm` works.
       # Version is read from package.json's "packageManager" field.
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4.4.0
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6.5.0
         with:
           node-version-file: .node-version
           cache: 'pnpm'
@@ -56,11 +56,11 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.1.0
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4.4.0
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6.5.0
         with:
           node-version-file: .node-version
           cache: pnpm
@@ -69,7 +69,7 @@ jobs:
 
       - run: pnpm build
 
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: dist
 
@@ -82,4 +82,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v5.0.0
