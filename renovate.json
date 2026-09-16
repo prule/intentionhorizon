@@ -3,7 +3,7 @@
   "extends": ["config:recommended"],
   "rangeStrategy": "pin",
   "timezone": "UTC",
-  "schedule": ["after 10pm on friday", "before 5am on monday"],
+  "schedule": ["* * * * 0,6"],
   "packageRules": [
     {
       "description": "Automerge minor/patch updates and pinned versions for devDependencies",
