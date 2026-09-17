@@ -19,8 +19,8 @@ importers:
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@playwright/test':
-        specifier: 1.60.0
-        version: 1.60.0
+        specifier: 1.63.0
+        version: 1.63.0
       '@serenity-js/assertions':
         specifier: ^3.43.2
         version: 3.43.2
@@ -32,10 +32,10 @@ importers:
         version: 3.43.2
       '@serenity-js/playwright':
         specifier: ^3.43.2
-        version: 3.43.2(playwright-core@1.60.0)
+        version: 3.43.2(playwright-core@1.63.0)
       '@serenity-js/playwright-test':
         specifier: ^3.43.2
-        version: 3.43.2(@playwright/test@1.60.0)(playwright-core@1.60.0)
+        version: 3.43.2(@playwright/test@1.63.0)(playwright-core@1.63.0)
       '@serenity-js/serenity-bdd':
         specifier: ^3.43.2
         version: 3.43.2
@@ -868,9 +868,9 @@ packages:
   '@paralleldrive/cuid2@2.3.1':
     resolution: {integrity: sha512-XO7cAxhnTZl0Yggq6jOgjiOHhbgcO4NqFqwSmQpjK3b6TEE6Uj/jfSk6wzYyemh3+I0sHirKSetjQwn5cZktFw==}
 
-  '@playwright/test@1.60.0':
-    resolution: {integrity: sha512-O71yZIbAh/PxDMNGns37GHBIfrVkEVyn+AXyIa5dOTfb4/xNvRWV+Vv/NMbNCtODB/pO7vLlF2OTmMVLhmr7Ag==}
-    engines: {node: '>=18'}
+  '@playwright/test@1.63.0':
+    resolution: {integrity: sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ==}
+    engines: {node: '>=20'}
     hasBin: true
 
   '@rolldown/pluginutils@1.0.0-beta.27':
@@ -1554,11 +1554,6 @@ packages:
     resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
     engines: {node: '>=10'}
 
-  fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -1981,14 +1976,14 @@ packages:
     resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
     engines: {node: '>=12'}
 
-  playwright-core@1.60.0:
-    resolution: {integrity: sha512-9bW6zvX/m0lEbgTKJ6YppOKx8H3VOPBMOCFh2irXFOT4BbHgrx5hPjwJYLT40Lu+4qtD36qKc/Hn56StUW57IA==}
-    engines: {node: '>=18'}
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
     hasBin: true
 
-  playwright@1.60.0:
-    resolution: {integrity: sha512-hheHdokM8cdqCb0lcE3s+zT4t4W+vvjpGxsZlDnikarzx8tSzMebh3UiFtgqwFwnTnjYQcsyMF8ei2mCO/tpeA==}
-    engines: {node: '>=18'}
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
     hasBin: true
 
   possible-typed-array-names@1.1.0:
@@ -3474,9 +3469,9 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
 
-  '@playwright/test@1.60.0':
+  '@playwright/test@1.63.0':
     dependencies:
-      playwright: 1.60.0
+      playwright: 1.63.0
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 
@@ -3624,11 +3619,11 @@ snapshots:
       upath: 2.0.1
       validate-npm-package-name: 7.0.2
 
-  '@serenity-js/playwright-test@3.43.2(@playwright/test@1.60.0)(playwright-core@1.60.0)':
+  '@serenity-js/playwright-test@3.43.2(@playwright/test@1.63.0)(playwright-core@1.63.0)':
     dependencies:
-      '@playwright/test': 1.60.0
+      '@playwright/test': 1.63.0
       '@serenity-js/core': 3.43.2
-      '@serenity-js/playwright': 3.43.2(playwright-core@1.60.0)
+      '@serenity-js/playwright': 3.43.2(playwright-core@1.63.0)
       '@serenity-js/rest': 3.43.2
       '@serenity-js/web': 3.43.2
       axios: 1.16.0
@@ -3639,11 +3634,11 @@ snapshots:
       - playwright-core
       - supports-color
 
-  '@serenity-js/playwright@3.43.2(playwright-core@1.60.0)':
+  '@serenity-js/playwright@3.43.2(playwright-core@1.63.0)':
     dependencies:
       '@serenity-js/core': 3.43.2
       '@serenity-js/web': 3.43.2
-      playwright-core: 1.60.0
+      playwright-core: 1.63.0
       tiny-types: 2.0.5
 
   '@serenity-js/rest@3.43.2':
@@ -4237,9 +4232,6 @@ snapshots:
       jsonfile: 6.2.1
       universalify: 2.0.1
 
-  fsevents@2.3.2:
-    optional: true
-
   fsevents@2.3.3:
     optional: true
 
@@ -4654,13 +4646,11 @@ snapshots:
 
   picomatch@4.0.5: {}
 
-  playwright-core@1.60.0: {}
+  playwright-core@1.63.0: {}
 
-  playwright@1.60.0:
+  playwright@1.63.0:
     dependencies:
-      playwright-core: 1.60.0
-    optionalDependencies:
-      fsevents: 2.3.2
+      playwright-core: 1.63.0
 
   possible-typed-array-names@1.1.0: {}
 
