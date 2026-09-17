@@ -22,25 +22,25 @@ importers:
         specifier: 1.63.0
         version: 1.63.0
       '@serenity-js/assertions':
-        specifier: ^3.43.2
+        specifier: 3.43.2
         version: 3.43.2
       '@serenity-js/console-reporter':
-        specifier: ^3.43.2
+        specifier: 3.43.2
         version: 3.43.2
       '@serenity-js/core':
-        specifier: ^3.43.2
+        specifier: 3.43.2
         version: 3.43.2
       '@serenity-js/playwright':
-        specifier: ^3.43.2
+        specifier: 3.43.2
         version: 3.43.2(playwright-core@1.63.0)
       '@serenity-js/playwright-test':
-        specifier: ^3.43.2
+        specifier: 3.43.2
         version: 3.43.2(@playwright/test@1.63.0)(playwright-core@1.63.0)
       '@serenity-js/serenity-bdd':
-        specifier: ^3.43.2
+        specifier: 3.43.2
         version: 3.43.2
       '@serenity-js/web':
-        specifier: ^3.43.2
+        specifier: 3.43.2
         version: 3.43.2
       '@types/node':
         specifier: 26.1.1
