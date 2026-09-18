@@ -12,10 +12,14 @@ permissions:
   pages: write
   id-token: write
 
-# One deploy at a time; let an in-progress run finish
+# Serialize per ref, not globally: a single shared group meant every open PR's
+# test run queued behind the same slot and got cancelled by the next one, so
+# most PRs never reported a result. Deploy serialization lives on the deploy
+# job instead. Superseded PR commits are cancelled; main pushes are not, so no
+# deploy is dropped.
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   # Build the app and run the e2e suite on every push and pull request.
@@ -77,6 +81,10 @@ jobs:
     if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
+    # One Pages deploy at a time; let an in-progress one finish.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
