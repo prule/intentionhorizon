@@ -167,8 +167,8 @@ importers:
   .:
     dependencies:
       dexie:
-        specifier: 4.4.3
-        version: 4.4.3
+        specifier: 4.4.6
+        version: 4.4.6
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -1554,8 +1554,8 @@ packages:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
 
-  dexie@4.4.3:
-    resolution: {integrity: sha512-N+3IGQ3HPlyO2YAkntGAwitm42BpBGV86MttzUMiRzWLa4NGh0pltVRcUVF4ybL/OnXjCrr9k7SDPIKkFYP2Lg==}
+  dexie@4.4.6:
+    resolution: {integrity: sha512-hJP/BO6mjB+tX6hToIO1kmxYLNmun90wYbfcoAoLpKEyDYal/k33dg0TAfoUe2TDsbbLoVIzljJ3BN2UbR5EOg==}
 
   diff@8.0.4:
     resolution: {integrity: sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==}
@@ -4171,7 +4171,7 @@ snapshots:
 
   delayed-stream@1.0.0: {}
 
-  dexie@4.4.3: {}
+  dexie@4.4.6: {}
 
   diff@8.0.4: {}
 
