@@ -13,23 +13,27 @@
     },
     {
       "description": "Group Serenity/JS package updates to prevent PR noise",
-      "matchPackagePatterns": ["^@serenity-js/"],
-      "groupName": "Serenity/JS packages"
+      "groupName": "Serenity/JS packages",
+      "matchPackageNames": ["/^@serenity-js//"]
     },
     {
       "description": "Group WebdriverIO package updates to prevent PR noise",
-      "matchPackagePatterns": ["^@wdio/", "^webdriverio$"],
-      "groupName": "WebdriverIO packages"
+      "groupName": "WebdriverIO packages",
+      "matchPackageNames": ["/^@wdio//", "/^webdriverio$/"]
     },
     {
       "description": "Group React ecosystem package updates to keep them aligned",
-      "matchPackagePatterns": ["^react", "^@types/react"],
-      "groupName": "React ecosystem"
+      "groupName": "React ecosystem",
+      "matchPackageNames": ["/^react/", "/^@types/react/"]
     },
     {
       "description": "Group testing utility package updates",
-      "matchPackagePatterns": ["^@testing-library/", "^jsdom$", "^fake-indexeddb$"],
-      "groupName": "Testing Library & Test Helpers"
+      "groupName": "Testing Library & Test Helpers",
+      "matchPackageNames": [
+        "/^@testing-library//",
+        "/^jsdom$/",
+        "/^fake-indexeddb$/"
+      ]
     }
   ]
 }
