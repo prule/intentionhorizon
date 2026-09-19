@@ -1,36 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "config:best-practices", "group:vite"],
-  "rangeStrategy": "pin",
-  "timezone": "UTC",
-  "schedule": ["* * * * 0,6"],
-  "packageRules": [
-    {
-      "description": "Automerge minor/patch updates and pinned versions for devDependencies",
-      "matchDepTypes": ["devDependencies"],
-      "matchUpdateTypes": ["minor", "patch", "pin"],
-      "automerge": true
-    },
-    {
-      "description": "Automerge digest bumps for the devcontainer image and Dockerfile syntax. Pinning these by digest means base-image security rebuilds now arrive as PRs instead of silently; an unreviewed queue of those is worse than the floating tag they replaced, so take them automatically once CI is green.",
-      "matchManagers": ["dockerfile", "devcontainer"],
-      "matchUpdateTypes": ["digest", "pinDigest"],
-      "automerge": true
-    },
-    {
-      "description": "Group Serenity/JS package updates to prevent PR noise",
-      "groupName": "Serenity/JS packages",
-      "matchPackageNames": ["/^@serenity-js//"]
-    },
-    {
-      "description": "Group WebdriverIO package updates to prevent PR noise",
-      "groupName": "WebdriverIO packages",
-      "matchPackageNames": ["/^@wdio//", "/^webdriverio$/"]
-    },
-    {
-      "description": "Group testing utility package updates",
-      "groupName": "Testing Library & Test Helpers",
-      "matchPackageNames": ["/^@testing-library//", "/^jsdom$/", "/^fake-indexeddb$/"]
-    }
-  ]
+  "extends": ["github>prule/renovate-config:node"]
 }
