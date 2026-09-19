@@ -27,13 +27,14 @@
       "matchPackageNames": ["/^react/", "/^@types/react/"]
     },
     {
+      "description": "Group Vite with its plugins: @vitejs/plugin-react imports vite/internal, so a plugin major cannot build against an older Vite major. Ungrouped, the plugin PR fails on its own and only goes green once Vite lands first.",
+      "groupName": "Vite",
+      "matchPackageNames": ["/^vite$/", "/^@vitejs//"]
+    },
+    {
       "description": "Group testing utility package updates",
       "groupName": "Testing Library & Test Helpers",
-      "matchPackageNames": [
-        "/^@testing-library//",
-        "/^jsdom$/",
-        "/^fake-indexeddb$/"
-      ]
+      "matchPackageNames": ["/^@testing-library//", "/^jsdom$/", "/^fake-indexeddb$/"]
     }
   ]
 }
