@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
 # Dev container image for Intention Horizon.
 #
 # Aligned with the Strength project's approach:
@@ -17,7 +17,7 @@
 # `.node-version` or the `packageManager` pin, update the matching ARG here and
 # rebuild the container ("Dev Containers: Rebuild").
 
-FROM mcr.microsoft.com/devcontainers/base:debian-12
+FROM mcr.microsoft.com/devcontainers/base:debian-12@sha256:23fa69fed758b7927c60061317d73baf7d66b9fca5c344e80bce3a940b229af0
 
 # --- Pinned versions (keep in sync with the repo's version files) ------------
 ARG NODE_VERSION=24.18.0
