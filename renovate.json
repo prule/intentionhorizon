@@ -12,6 +12,12 @@
       "automerge": true
     },
     {
+      "description": "Automerge digest bumps for the devcontainer image and Dockerfile syntax. Pinning these by digest means base-image security rebuilds now arrive as PRs instead of silently; an unreviewed queue of those is worse than the floating tag they replaced, so take them automatically once CI is green.",
+      "matchManagers": ["dockerfile", "devcontainer"],
+      "matchUpdateTypes": ["digest", "pinDigest"],
+      "automerge": true
+    },
+    {
       "description": "Group Serenity/JS package updates to prevent PR noise",
       "groupName": "Serenity/JS packages",
       "matchPackageNames": ["/^@serenity-js//"]
