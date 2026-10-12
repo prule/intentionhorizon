@@ -15076,3 +15076,8 @@ target
 
 # Screenshot fixture data (regenerated with current dates via pnpm run gen:screenshot-data)
 images/screenshot-data.csv
+
+# Enforce pnpm: these must never be committed.
+package-lock.json
+yarn.lock
+npm-shrinkwrap.json
