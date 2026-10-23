@@ -20,8 +20,8 @@
 FROM mcr.microsoft.com/devcontainers/base:debian-12@sha256:23fa69fed758b7927c60061317d73baf7d66b9fca5c344e80bce3a940b229af0
 
 # --- Pinned versions (keep in sync with the repo's version files) ------------
-ARG NODE_VERSION=24.18.0
-ARG PNPM_VERSION=11.5.2
+ARG NODE_VERSION=26.12.1
+ARG PNPM_VERSION=12.4.2
 # OpenSpec CLI — the committed .claude/skills/openspec-* skills require it
 # (compatibility: "Requires openspec CLI"; they call `openspec list/status/
 # archive --json`). Without it Claude falls back to hand-editing openspec/ files.
