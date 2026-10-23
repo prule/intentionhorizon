@@ -23,8 +23,8 @@ bookworm dev container, with Node and Java layered on as dev container features
 
 | Tool                           | Why it's there                                                                                |
 | ------------------------------ | --------------------------------------------------------------------------------------------- |
-| **Node 24.18.0**               | Pinned to match `.node-version` and CI, via the Node feature.                                 |
-| **pnpm 11.5.2**                | Pinned to `package.json`'s `packageManager` field via corepack.                               |
+| **Node 26.12.1**               | Pinned to match `.node-version` and CI, installed via fnm in the Dockerfile.                  |
+| **pnpm 12.4.2**                | Pinned to `package.json`'s `packageManager` field, installed standalone (not corepack).       |
 | **Java (headless JRE)**        | `serenity-bdd` generates the BDD report by running a Java jar.                                |
 | **Playwright + Chromium deps** | e2e tests. OS libs are baked in; the browser binary is installed per-project on first create. |
 | **Claude Code CLI** (`claude`) | The AI pair-programmer that drives the workflow below.                                        |
