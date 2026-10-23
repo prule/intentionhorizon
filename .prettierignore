@@ -18,7 +18,7 @@ intention-horizon-handoff/
 
 # OpenSpec-generated skill/command docs, mirrored under both dirs — treat as
 # vendored tool config rather than project prose.
-.agent/
+.agents/
 .claude/
 
 # Legacy planning note with a hand-aligned ASCII example table; Prettier's
