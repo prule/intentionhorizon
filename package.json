@@ -23,7 +23,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "dexie": "4.4.6",
+    "dexie": "4.4.7",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
