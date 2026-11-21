@@ -7,7 +7,7 @@ import type { SerenityFixtures, SerenityWorkerFixtures } from '@serenity-js/play
  * include it. Each test gets a fresh browser context (isolated IndexedDB +
  * localStorage), and a deterministic dataset is injected per test.
  */
-const PORT = 5173;
+const PORT = 5181;
 const baseURL = `http://localhost:${PORT}`;
 
 export default defineConfig<SerenityFixtures, SerenityWorkerFixtures>({
