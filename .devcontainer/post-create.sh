@@ -95,4 +95,4 @@ CI=true pnpm install --frozen-lockfile
 echo "==> Installing Playwright Chromium"
 pnpm exec playwright install --with-deps chromium
 
-echo "==> Done. Start the app with:  pnpm dev   (Vite on :5173)"
+echo "==> Done. Start the app with:  pnpm dev   (Vite on :5181)"

@@ -84,7 +84,10 @@ export default defineConfig({
   // network namespace — required when running inside the dev container, where
   // a default localhost bind is only visible to the container itself. Harmless
   // on a native host. preview mirrors this for `pnpm preview`.
-  server: { host: true, port: 5173 },
+  // Own port so it never clashes with another project's dev server; the
+  // devvm reaches it as http://intentionhorizon.devvm through Caddy, so
+  // Vite must accept that Host header.
+  server: { host: true, port: 5181, strictPort: true, allowedHosts: ['.devvm'] },
   preview: { host: true, port: 4173 },
   // Unit tests (Vitest) reuse this Vite pipeline. jsdom gives store code
   // localStorage/DOM; the setup file registers a headless IndexedDB so Dexie

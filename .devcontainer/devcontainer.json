@@ -29,9 +29,9 @@
   "runArgs": ["--name", "intention-horizon-dev", "--hostname", "intention-horizon"],
 
   // Vite dev server + preview (this app lives at the repo ROOT).
-  "forwardPorts": [5173, 4173],
+  "forwardPorts": [5181, 4173],
   "portsAttributes": {
-    "5173": { "label": "Vite dev server", "onAutoForward": "notify" },
+    "5181": { "label": "Vite dev server", "onAutoForward": "notify" },
     "4173": { "label": "Vite preview", "onAutoForward": "silent" }
   },
 
