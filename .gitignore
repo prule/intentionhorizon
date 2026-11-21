@@ -15081,3 +15081,5 @@ images/screenshot-data.csv
 package-lock.json
 yarn.lock
 npm-shrinkwrap.json
+.scannerwork/
+coverage/

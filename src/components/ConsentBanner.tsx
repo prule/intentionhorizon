@@ -7,12 +7,8 @@ import React from 'react';
 import { getStoredConsent, setConsent, type ConsentChoice } from '../consent';
 
 export function ConsentBanner() {
-  const [visible, setVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    // Only prompt when the user hasn't chosen yet.
-    if (getStoredConsent() === null) setVisible(true);
-  }, []);
+  // Only prompt when the user hasn't chosen yet.
+  const [visible, setVisible] = React.useState(() => getStoredConsent() === null);
 
   if (!visible) return null;
 

@@ -29,9 +29,13 @@ ARG OPENSPEC_VERSION=1.14.3
 
 # The base image ships a non-root `vscode` user with passwordless sudo; we build
 # the JS toolchain under that user so file ownership matches at runtime.
+# Named, not numeric: the base image defines it, and devcontainers remap its uid.
+# hadolint ignore=DL3066
 USER vscode
 ENV FNM_DIR=/home/vscode/.fnm
 ENV PNPM_HOME=/home/vscode/.local/share/pnpm
+# Piped curl installers below must fail the build if the download fails.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # --- fnm + Node --------------------------------------------------------------
 # Install fnm (Fast Node Manager), then the pinned Node. `--corepack-enabled` is
@@ -49,7 +53,9 @@ RUN curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION="$PNPM_VERSION"
 # --- Shell wiring ------------------------------------------------------------
 # Put fnm + pnpm on PATH for every interactive shell, and make fnm auto-select
 # the Node version from `.node-version` on `cd`. Written to ~/.bashrc AND
-# ~/.zshrc so both shells behave identically.
+# ~/.zshrc so both shells behave identically. The single quotes are deliberate:
+# $HOME etc. must land unexpanded in the rc files.
+# hadolint ignore=SC2016
 RUN <<'EOF'
 set -e
 for shell in bash zsh; do

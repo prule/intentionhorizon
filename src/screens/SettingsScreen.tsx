@@ -186,11 +186,15 @@ function IntentionEditor({
   const [form, setForm] = React.useState<IH.IntentionInput>(blank);
   // Raw text for the period field so it can be blanked mid-edit; clamped on blur.
   const [periodText, setPeriodText] = React.useState(String(blank.targetPeriodDays));
-  React.useEffect(() => {
+  // Reset the form whenever the sheet opens/closes or targets another intention;
+  // done during render, React's pattern for resetting state on a prop change.
+  const [shownFor, setShownFor] = React.useState({ open, editing });
+  if (shownFor.open !== open || shownFor.editing !== editing) {
     const next = editing ? { ...editing } : blank;
+    setShownFor({ open, editing });
     setForm(next);
     setPeriodText(String(next.targetPeriodDays));
-  }, [open, editing]);
+  }
   const set = (patch: Partial<IH.IntentionInput>) => setForm((f) => ({ ...f, ...patch }));
   const valid = form.name.trim().length > 0;
 
@@ -355,10 +359,13 @@ function CategoryEditor({
   editing: IH.Category | null;
   onSaved: () => void;
 }) {
-  const [name, setName] = React.useState('');
-  React.useEffect(() => {
+  const [name, setName] = React.useState(editing ? editing.name : '');
+  // Reset on open/close or a different category, during render (see IntentionEditor).
+  const [shownFor, setShownFor] = React.useState({ open, editing });
+  if (shownFor.open !== open || shownFor.editing !== editing) {
+    setShownFor({ open, editing });
     setName(editing ? editing.name : '');
-  }, [open, editing]);
+  }
   const valid = name.trim().length > 0;
   const save = () => {
     if (!valid) return;
@@ -556,6 +563,176 @@ function AnalyticsConsent() {
   );
 }
 
+function CategorySection({
+  g,
+  rows,
+  handle,
+  noDrag,
+  onEditCategory,
+  onEditIntention,
+  bump,
+}: Readonly<{
+  g: Group;
+  rows: IH.Intention[];
+  handle?: DragHandleProps;
+  noDrag?: boolean;
+  onEditCategory: (g: Group) => void;
+  onEditIntention: (it: IH.Intention) => void;
+  bump: () => void;
+}>) {
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <div
+        data-testid="category-section"
+        data-category-name={g.name}
+        style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '0 22px 7px' }}
+      >
+        {!noDrag && (
+          <span
+            {...handle!}
+            style={{
+              ...handle!.style,
+              color: 'var(--ink-4)',
+              display: 'flex',
+              marginLeft: -4,
+              padding: '2px 2px',
+            }}
+          >
+            <Icon.grip />
+          </span>
+        )}
+        <span
+          style={{
+            flex: 1,
+            fontSize: 12,
+            fontWeight: 700,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            color: 'var(--ink-3)',
+          }}
+        >
+          {g.name}
+        </span>
+        {g.id !== '_none' && (
+          <button
+            className="ih-btn"
+            data-testid="category-edit"
+            data-category-name={g.name}
+            onClick={() => onEditCategory(g)}
+            style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink-3)' }}
+          >
+            Edit
+          </button>
+        )}
+      </div>
+      <div
+        style={{
+          background: 'var(--surface)',
+          margin: '0 14px',
+          borderRadius: 'var(--radius)',
+          boxShadow: 'var(--shadow-card)',
+          overflow: 'hidden',
+        }}
+      >
+        {rows.length === 0 && (
+          <div style={{ padding: '14px 16px', fontSize: 13.5, color: 'var(--ink-4)' }}>
+            No intentions
+          </div>
+        )}
+        <DragList
+          items={rows}
+          getKey={(it) => it.id}
+          onReorder={(ids) => {
+            IH.reorderIntentions(g.id, ids);
+            bump();
+          }}
+          renderItem={(it, h, dragging) => {
+            const idx = rows.indexOf(it);
+            const last = idx === rows.length - 1;
+            return (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  background: 'var(--surface)',
+                  borderBottom: last || dragging ? 'none' : '1px solid var(--line-soft)',
+                }}
+              >
+                <span
+                  {...h}
+                  style={{
+                    ...h.style,
+                    color: 'var(--ink-4)',
+                    display: 'flex',
+                    padding: '14px 4px 14px 12px',
+                  }}
+                >
+                  <Icon.grip />
+                </span>
+                <button
+                  className="ih-btn"
+                  data-testid="settings-intention"
+                  data-intention-name={it.name}
+                  onClick={() => onEditIntention(it)}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 11,
+                    padding: '13px 16px 13px 4px',
+                    textAlign: 'left',
+                    minWidth: 0,
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 14,
+                      height: 14,
+                      borderRadius: 5,
+                      background: IH.colorVar(it.color),
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span
+                    style={{
+                      flex: 1,
+                      fontSize: 15.5,
+                      fontWeight: 600,
+                      color: 'var(--ink)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {it.name}
+                  </span>
+                  {it.targetEnabled && (
+                    <span
+                      className="num"
+                      data-testid="target-badge"
+                      data-intention-name={it.name}
+                      style={{
+                        fontSize: 12,
+                        color: 'var(--ink-3)',
+                        background: 'var(--bg-2)',
+                        padding: '3px 8px',
+                        borderRadius: 7,
+                      }}
+                    >
+                      {it.targetCompletions}/{it.targetPeriodDays}d
+                    </span>
+                  )}
+                  <Icon.chevR style={{ color: 'var(--ink-4)', width: 16, height: 16 }} />
+                </button>
+              </div>
+            );
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function SettingsScreen({
   bump,
   openGuide,
@@ -604,169 +781,10 @@ export function SettingsScreen({
   });
   const hasNone = !!intentsByCat['_none'];
 
-  const openIntent = (it: IH.Intention) => setIntentEditor({ open: true, editing: it });
-
-  const Section = ({
-    g,
-    handle,
-    noDrag,
-  }: {
-    g: Group;
-    handle?: DragHandleProps;
-    noDrag?: boolean;
-  }) => {
-    const rows = intentsByCat[g.id] || [];
-    return (
-      <div style={{ marginBottom: 18 }}>
-        <div
-          data-testid="category-section"
-          data-category-name={g.name}
-          style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '0 22px 7px' }}
-        >
-          {!noDrag && (
-            <span
-              {...handle!}
-              style={{
-                ...handle!.style,
-                color: 'var(--ink-4)',
-                display: 'flex',
-                marginLeft: -4,
-                padding: '2px 2px',
-              }}
-            >
-              <Icon.grip />
-            </span>
-          )}
-          <span
-            style={{
-              flex: 1,
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-              color: 'var(--ink-3)',
-            }}
-          >
-            {g.name}
-          </span>
-          {g.id !== '_none' && (
-            <button
-              className="ih-btn"
-              data-testid="category-edit"
-              data-category-name={g.name}
-              onClick={() => setCatEditor({ open: true, editing: g })}
-              style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink-3)' }}
-            >
-              Edit
-            </button>
-          )}
-        </div>
-        <div
-          style={{
-            background: 'var(--surface)',
-            margin: '0 14px',
-            borderRadius: 'var(--radius)',
-            boxShadow: 'var(--shadow-card)',
-            overflow: 'hidden',
-          }}
-        >
-          {rows.length === 0 && (
-            <div style={{ padding: '14px 16px', fontSize: 13.5, color: 'var(--ink-4)' }}>
-              No intentions
-            </div>
-          )}
-          <DragList
-            items={rows}
-            getKey={(it) => it.id}
-            onReorder={(ids) => {
-              IH.reorderIntentions(g.id, ids);
-              bump();
-            }}
-            renderItem={(it, h, dragging) => {
-              const idx = rows.indexOf(it);
-              const last = idx === rows.length - 1;
-              return (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    background: 'var(--surface)',
-                    borderBottom: last || dragging ? 'none' : '1px solid var(--line-soft)',
-                  }}
-                >
-                  <span
-                    {...h}
-                    style={{
-                      ...h.style,
-                      color: 'var(--ink-4)',
-                      display: 'flex',
-                      padding: '14px 4px 14px 12px',
-                    }}
-                  >
-                    <Icon.grip />
-                  </span>
-                  <button
-                    className="ih-btn"
-                    data-testid="settings-intention"
-                    data-intention-name={it.name}
-                    onClick={() => openIntent(it)}
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 11,
-                      padding: '13px 16px 13px 4px',
-                      textAlign: 'left',
-                      minWidth: 0,
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: 14,
-                        height: 14,
-                        borderRadius: 5,
-                        background: IH.colorVar(it.color),
-                        flexShrink: 0,
-                      }}
-                    />
-                    <span
-                      style={{
-                        flex: 1,
-                        fontSize: 15.5,
-                        fontWeight: 600,
-                        color: 'var(--ink)',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {it.name}
-                    </span>
-                    {it.targetEnabled && (
-                      <span
-                        className="num"
-                        data-testid="target-badge"
-                        data-intention-name={it.name}
-                        style={{
-                          fontSize: 12,
-                          color: 'var(--ink-3)',
-                          background: 'var(--bg-2)',
-                          padding: '3px 8px',
-                          borderRadius: 7,
-                        }}
-                      >
-                        {it.targetCompletions}/{it.targetPeriodDays}d
-                      </span>
-                    )}
-                    <Icon.chevR style={{ color: 'var(--ink-4)', width: 16, height: 16 }} />
-                  </button>
-                </div>
-              );
-            }}
-          />
-        </div>
-      </div>
-    );
+  const sectionProps = {
+    onEditCategory: (g: Group) => setCatEditor({ open: true, editing: g }),
+    onEditIntention: (it: IH.Intention) => setIntentEditor({ open: true, editing: it }),
+    bump,
   };
 
   return (
@@ -802,9 +820,23 @@ export function SettingsScreen({
           IH.reorderCategories(ids);
           bump();
         }}
-        renderItem={(g, handle) => <Section g={g} handle={handle} />}
+        renderItem={(g, handle) => (
+          <CategorySection
+            g={g}
+            rows={intentsByCat[g.id] || []}
+            handle={handle}
+            {...sectionProps}
+          />
+        )}
       />
-      {hasNone && <Section g={{ id: '_none', name: 'Uncategorized' }} noDrag />}
+      {hasNone && (
+        <CategorySection
+          g={{ id: '_none', name: 'Uncategorized' }}
+          rows={intentsByCat['_none']}
+          noDrag
+          {...sectionProps}
+        />
+      )}
 
       <div style={{ padding: '4px 14px 0', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {IH.mockEnabled() && <DataSourceSwitcher bump={bump} />}
