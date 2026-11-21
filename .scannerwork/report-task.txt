@@ -1,6 +1,0 @@
-projectKey=intentionhorizon
-serverUrl=http://localhost:9000
-serverVersion=26.9.0.129388
-dashboardUrl=http://localhost:9000/dashboard?id=intentionhorizon
-ceTaskId=ec8b5676-0a9c-4a07-8b3b-18fa92ce0990
-ceTaskUrl=http://localhost:9000/api/ce/task?id=ec8b5676-0a9c-4a07-8b3b-18fa92ce0990
