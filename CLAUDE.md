@@ -12,6 +12,8 @@ Intention Horizon — a local-first habit-tracking PWA. React + TypeScript, Inde
 pnpm dev              # Vite dev server on :5181
 pnpm build            # tsc --noEmit, then vite build
 pnpm typecheck        # tsc --noEmit only
+pnpm test             # eslint --fix + prettier --write (check-only when CI is set), typecheck, vitest --coverage (lcov for sonar-check)
+pnpm lint             # eslint + prettier --check, no writes (CI runs this)
 pnpm test:unit        # vitest run (jsdom + fake-indexeddb)
 pnpm test:watch       # vitest watch mode
 pnpm e2e              # Playwright + Serenity/JS, headless Chromium

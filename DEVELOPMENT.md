@@ -27,19 +27,20 @@ pnpm dev                                         # http://localhost:5181
 
 ## Everyday commands
 
-| Command                              | What it does                                                 |
-| ------------------------------------ | ------------------------------------------------------------ |
-| `pnpm dev`                           | Vite dev server on `5181`.                                   |
-| `pnpm build`                         | Type-check (`tsc --noEmit`) then production build.           |
-| `pnpm typecheck`                     | Types only.                                                  |
-| `pnpm test:unit`                     | Vitest run (jsdom + fake-indexeddb).                         |
-| `pnpm test:watch`                    | Vitest in watch mode.                                        |
-| `pnpm e2e`                           | Playwright + Serenity/JS Screenplay e2e (Chromium).          |
-| `pnpm e2e:headed` / `pnpm e2e:debug` | e2e with a visible browser / the inspector.                  |
-| `pnpm e2e:report`                    | Run e2e, then generate the Serenity BDD report (needs Java). |
-| `pnpm preview`                       | Serve the production build on `4173`.                        |
-| `pnpm format`                        | Format the whole repo with Prettier.                         |
-| `pnpm format:check`                  | Check formatting without writing (`prettier --check .`).     |
+| Command                              | What it does                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------- |
+| `pnpm dev`                           | Vite dev server on `5181`.                                                      |
+| `pnpm build`                         | Type-check (`tsc --noEmit`) then production build.                              |
+| `pnpm typecheck`                     | Types only.                                                                     |
+| `pnpm test:unit`                     | Vitest run (jsdom + fake-indexeddb).                                            |
+| `pnpm test:watch`                    | Vitest in watch mode.                                                           |
+| `pnpm e2e`                           | Playwright + Serenity/JS Screenplay e2e (Chromium).                             |
+| `pnpm e2e:headed` / `pnpm e2e:debug` | e2e with a visible browser / the inspector.                                     |
+| `pnpm e2e:report`                    | Run e2e, then generate the Serenity BDD report (needs Java).                    |
+| `pnpm preview`                       | Serve the production build on `4173`.                                           |
+| `pnpm test`                          | Fix lint/format (check only when `CI` is set), type-check, then the unit suite. |
+| `pnpm format`                        | ESLint `--fix` then Prettier over the whole repo.                               |
+| `pnpm lint`                          | Check ESLint and Prettier without writing (what CI runs).                       |
 
 Enable the mock data source by adding to `.env.local` (see
 [`.env.example`](.env.example)):

@@ -24,3 +24,5 @@ intention-horizon-handoff/
 # Legacy planning note with a hand-aligned ASCII example table; Prettier's
 # markdown formatter collapses the intentional whitespace and destroys it.
 IntentionHorizon.md
+
+coverage

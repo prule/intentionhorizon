@@ -203,7 +203,6 @@ function IntentionRow({
 export function EntryScreen({
   date,
   setDate,
-  version,
   bump,
   openGuide,
 }: {
