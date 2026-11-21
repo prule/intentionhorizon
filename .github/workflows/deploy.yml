@@ -43,11 +43,14 @@ jobs:
       # Only Chromium is configured in playwright.config.ts.
       - run: pnpm exec playwright install --with-deps chromium
 
+      # Lint and format check (CI is set, so `pnpm test` only checks, never rewrites).
+      - run: pnpm lint
+
       - run: pnpm build
 
       # Fast unit suite runs before e2e so logic failures surface before the
       # slower browser run; a failing unit test fails the job and gates deploy.
-      - run: pnpm test:unit
+      - run: pnpm test
 
       # Playwright starts its own dev server (CI=true disables reuse), and the
       # e2e seed hook is gated behind import.meta.env.DEV, so tests run against

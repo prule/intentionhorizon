@@ -180,8 +180,16 @@ function Heatmap({ filter }: { filter: string | null }) {
     weeks.push(row);
   }
 
-  // month labels down the left of each week row (show when month changes)
-  let lastMonth = -1;
+  // month labels down the left of each week row (show when month changes),
+  // newest week first; computed before render so the JSX map stays pure
+  const newestFirst = weeks.slice().reverse();
+  // every row has a real cell: its Sunday is never after today
+  const monthOf = (row: (HeatCell | null)[]) => row.find(Boolean)?.day.getMonth();
+  const labelled = newestFirst.map((row, i) => {
+    const mo = monthOf(row);
+    const changed = mo !== undefined && (i === 0 || mo !== monthOf(newestFirst[i - 1]));
+    return { row, monthLabel: changed ? IH.MONTHS[mo] : '' };
+  });
 
   return (
     <div style={{ padding: '4px 20px 0' }}>
@@ -206,40 +214,28 @@ function Heatmap({ filter }: { filter: string | null }) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-        {weeks
-          .slice()
-          .reverse()
-          .map((row, wi) => {
-            const firstReal = row.find((c) => c);
-            let monthLabel = '';
-            if (firstReal) {
-              const mo = firstReal.day.getMonth();
-              if (mo !== lastMonth) {
-                monthLabel = IH.MONTHS[mo];
-                lastMonth = mo;
-              }
-            }
-            return (
+        {labelled.map(({ row, monthLabel }, wi) => {
+          return (
+            <div
+              key={wi}
+              style={{ display: 'grid', gridTemplateColumns: '22px repeat(7, 1fr)', gap: 5 }}
+            >
               <div
-                key={wi}
-                style={{ display: 'grid', gridTemplateColumns: '22px repeat(7, 1fr)', gap: 5 }}
+                style={{
+                  fontSize: 9,
+                  color: 'var(--ink-4)',
+                  alignSelf: 'center',
+                  fontWeight: 600,
+                }}
               >
-                <div
-                  style={{
-                    fontSize: 9,
-                    color: 'var(--ink-4)',
-                    alignSelf: 'center',
-                    fontWeight: 600,
-                  }}
-                >
-                  {monthLabel}
-                </div>
-                {row.map((c, di) => (
-                  <Cell key={di} cell={c} heatColor={heatColor} delay={(wi * 7 + di) * 4} />
-                ))}
+                {monthLabel}
               </div>
-            );
-          })}
+              {row.map((c, di) => (
+                <Cell key={di} cell={c} heatColor={heatColor} delay={(wi * 7 + di) * 4} />
+              ))}
+            </div>
+          );
+        })}
       </div>
 
       <Legend heatColor={heatColor} filter={filter} />
@@ -412,13 +408,12 @@ function StreakStats({ filter }: { filter: string | null }) {
   );
 }
 
-export function AnalyticsScreen({ version }: { version: number }) {
+// `version` isn't read: a changed prop re-renders this screen, re-running IH.load().
+export function AnalyticsScreen(_props: Readonly<{ version: number }>) {
   const s = IH.load();
-  const [filter, setFilter] = React.useState<string | null>(null);
+  const [chosen, setChosen] = React.useState<string | null>(null);
   // guard against deleted intention filter
-  React.useEffect(() => {
-    if (filter && !s.intentions.find((i) => i.id === filter)) setFilter(null);
-  }, [version]);
+  const filter = chosen && s.intentions.some((i) => i.id === chosen) ? chosen : null;
 
   return (
     <div className="ih-scroll fade-up" data-testid="screen-insights" style={{ paddingBottom: 28 }}>
@@ -448,7 +443,7 @@ export function AnalyticsScreen({ version }: { version: number }) {
         }
       />
       <div style={{ marginBottom: 16 }}>
-        <FilterChips intentions={s.intentions} value={filter} onChange={setFilter} />
+        <FilterChips intentions={s.intentions} value={filter} onChange={setChosen} />
       </div>
       <StreakStats filter={filter} />
       <Heatmap filter={filter} />

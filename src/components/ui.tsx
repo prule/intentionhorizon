@@ -35,7 +35,7 @@ export function CircleToggle({
       }
       onClick={(e) => {
         e.stopPropagation();
-        onToggle && onToggle();
+        onToggle?.();
       }}
       role="checkbox"
       aria-checked={on}
@@ -345,6 +345,21 @@ type DragState = {
   tops: number[];
   heights: number[];
 };
+// Renders via JSX, not a direct call in DragList's render: the handle's handlers
+// read refs, and React only knows they won't run during render when passed as props.
+function DragRow<T>({
+  render,
+  item,
+  handle,
+  dragging,
+}: {
+  render: (item: T, handle: DragHandleProps, dragging: boolean) => React.ReactNode;
+  item: T;
+  handle: DragHandleProps;
+  dragging: boolean;
+}) {
+  return render(item, handle, dragging);
+}
 export function DragList<T>({
   items,
   getKey,
@@ -412,10 +427,15 @@ export function DragList<T>({
       setDrag(null);
     }
   };
-  // clear drag once the reordered items propagate down (or any items change)
+  // clear drag once the reordered items propagate down (or any items change);
+  // done during render, React's pattern for resetting state on a prop change
+  const [prevItems, setPrevItems] = React.useState(items);
+  if (items !== prevItems) {
+    setPrevItems(items);
+    setDrag(null);
+  }
   React.useEffect(() => {
     dragRef.current = null;
-    setDrag(null);
   }, [items]);
   const shiftFor = (i: number) => {
     if (!drag || i === drag.index) return 0;
@@ -447,17 +467,18 @@ export function DragList<T>({
               background: dragging ? 'var(--surface)' : 'transparent',
             }}
           >
-            {renderItem(
-              it,
-              {
+            <DragRow
+              render={renderItem}
+              item={it}
+              dragging={dragging}
+              handle={{
                 onPointerDown: (e) => begin(e, i),
                 onPointerMove: move,
                 onPointerUp: end,
                 onPointerCancel: end,
                 style: { touchAction: 'none', cursor: 'grab' },
-              },
-              dragging,
-            )}
+              }}
+            />
           </div>
         );
       })}
@@ -495,17 +516,19 @@ export function TabBar({ tab, setTab }: { tab: string; setTab: (tab: string) => 
 
 // ── responsive helper ──
 export function useMedia(query: string): boolean {
-  const [match, setMatch] = React.useState<boolean>(() =>
-    typeof window !== 'undefined' ? window.matchMedia(query).matches : false,
+  const subscribe = React.useCallback(
+    (onChange: () => void) => {
+      const mq = window.matchMedia(query);
+      mq.addEventListener('change', onChange);
+      return () => mq.removeEventListener('change', onChange);
+    },
+    [query],
   );
-  React.useEffect(() => {
-    const mq = window.matchMedia(query);
-    const handler = (e: MediaQueryListEvent) => setMatch(e.matches);
-    setMatch(mq.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, [query]);
-  return match;
+  return React.useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(query).matches,
+    () => false,
+  );
 }
 
 // ── desktop sidebar navigation ──

@@ -180,8 +180,9 @@ All run inside the container:
 | `pnpm e2e:headed` / `pnpm e2e:debug` | e2e with a visible browser / the inspector.                                             |
 | `pnpm e2e:report`                    | Run e2e, then generate the Serenity BDD report (needs Java — present in the container). |
 | `pnpm preview`                       | Serve the production build on `4173`.                                                   |
-| `pnpm format`                        | Format the whole repo with Prettier.                                                    |
-| `pnpm format:check`                  | Check formatting without writing (`prettier --check .`).                                |
+| `pnpm test`                          | Fix lint/format (check only when `CI` is set), type-check, then the unit suite.         |
+| `pnpm format`                        | ESLint `--fix` then Prettier over the whole repo.                                       |
+| `pnpm lint`                          | Check ESLint and Prettier without writing (what CI runs).                               |
 
 Enable the mock data source by adding to `.env.local` (see
 [`.env.example`](.env.example)):

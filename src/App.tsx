@@ -64,8 +64,10 @@ export default function App() {
     const onHashChange = () => {
       const next = hashToTab(window.location.hash);
       if (next) setTabState((cur) => (cur === next ? cur : next));
-      else
-        (window.history.replaceState(null, '', tabToHash(DEFAULT_TAB)), setTabState(DEFAULT_TAB));
+      else {
+        window.history.replaceState(null, '', tabToHash(DEFAULT_TAB));
+        setTabState(DEFAULT_TAB);
+      }
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
