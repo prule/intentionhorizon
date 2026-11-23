@@ -81,9 +81,8 @@ export default defineConfig({
     }),
   ],
   // host: true binds to 0.0.0.0 so the server is reachable from outside its
-  // network namespace — required when running inside the dev container, where
-  // a default localhost bind is only visible to the container itself. Harmless
-  // on a native host. preview mirrors this for `pnpm preview`.
+  // network namespace (the devvm's Caddy proxy). preview mirrors this for
+  // `pnpm preview`.
   // Own port so it never clashes with another project's dev server; the
   // devvm reaches it as http://intentionhorizon.devvm through Caddy, so
   // Vite must accept that Host header.
